@@ -12,12 +12,12 @@ const SECRET_KEY = 'rahasia_negara_jangan_disebar';
 
 // === 1. KONFIGURASI DATABASE ===
 const dbConfig = {
-    host: 'sql.freedb.tech', 
-    port: 3306,              
-    user: 'freedb_Sponginc', 
-    password: 'Yp3fs5P*?dp!JN!', 
-    database: 'freedb_ProjectKantorDesa', // <--- JANGAN LUPA KOMA DI SINI
-    ssl: { rejectUnauthorized: false }    // <--- TAMBAHKAN BARIS INI (SURAT PENGANTARNYA)
+    host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com', // Sesuaikan host TiDB kamu
+    port: 4000,                           // Port TiDB pasti 4000
+    user: '7fEq5HD6vQFGK7W.root',                   // Sesuaikan user TiDB kamu
+    password: 'ypPvtKZIbeTi4uk6',       // Sesuaikan password TiDB kamu
+    database: 'sys',                     // Database bawaan TiDB selalu bernama 'test'
+    ssl: { rejectUnauthorized: true }     // TiDB mewajibkan SSL disetel ke true
 };
 
 const pool = mysql.createPool(dbConfig);
