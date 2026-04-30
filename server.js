@@ -54,7 +54,9 @@ app.post('/api/login', async (req, res) => {
             // CCTV 3: Membandingkan secara langsung
             console.log("3. Pencocokan -> Input:", password, "VS Database:", user.password);
 
-            const isMatch = (password === user.password);
+            const isMatch = user.password.startsWith('$2b$') 
+    ? await bcrypt.compare(req.body.password, user.password) 
+    : (req.body.password === user.password);
 
             if (isMatch) {
                 console.log("4. HASIL: COCOK! Login Sukses.");
