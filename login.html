@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk - Portal Desa</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* === TEMA MINIMALIST CLEAN === */
+    body {
+      background-color: #f0f2f5;
+      /* Background Abu Lembut (Bukan Gradasi lagi) */
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-box {
+      width: 400px;
+      /* Sedikit lebih lebar biar lega */
+    }
+
+    /* Kartu Login Baru */
+    .card {
+      border: none;
+      border-radius: 20px;
+      /* Sudut membulat */
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      /* Bayangan halus */
+      background: #ffffff;
+      padding: 10px;
+    }
+
+    .card-header {
+      background: transparent;
+      border-bottom: none;
+      padding-top: 20px;
+      padding-bottom: 0;
+    }
+
+    .h1 {
+      color: #1a1a1a;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .login-box-msg {
+      color: #6c757d;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    /* Input Field Modern */
+    .form-control {
+      background-color: #f8f9fa;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      /* Tumpul */
+      height: 50px;
+      font-size: 0.95rem;
+      padding-left: 15px;
+      transition: 0.3s;
+    }
+
+    .form-control:focus {
+      background-color: #fff;
+      border-color: #0066ff;
+      box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1);
+    }
+
+    /* Ikon di samping input */
+    .input-group-text {
+      background-color: #f8f9fa;
+      border: 1px solid #eee;
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+      color: #adb5bd;
+    }
+
+    /* Fix border radius untuk input group */
+    .input-group .form-control {
+      border-right: none;
+      border-radius: 12px 0 0 12px;
+    }
+
+    .input-group {
+      margin-bottom: 20px !important;
+    }
+
+    /* Tombol Modern */
+    .btn-primary {
+      background-color: #0066ff;
+      /* Biru Tech */
+      border: none;
+      border-radius: 12px;
+      height: 45px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #0052cc;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 102, 255, 0.3);
+    }
+
+    /* Pesan Error */
+    #errorMsg {
+      margin-top: 15px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body class="hold-transition login-page">
+
+  <div class="login-box">
+    <div class="card">
+      <div class="card-header text-center">
+        <i class="fas fa-landmark text-primary mb-2" style="font-size: 2.5rem; opacity: 0.8;"></i>
+        <br>
+        <a href="#" class="h1">Portal<b>Desa</b></a>
+      </div>
+      <div class="card-body">
+        <p class="login-box-msg">Silakan masuk untuk mengelola data</p>
+
+        <form id="loginForm">
+          <div class="input-group">
+            <input type="text" id="username" class="form-control" placeholder="Username" required>
+            <div class="input-group-append">
+              <div class="input-group-text"><span class="fas fa-user"></span></div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <input type="password" id="password" class="form-control" placeholder="Kata Sandi" required>
+            <div class="input-group-append">
+              <div class="input-group-text"><span class="fas fa-lock"></span></div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <button type="submit" id="btnMasuk" class="btn btn-primary btn-block">
+                Masuk
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <p class="mt-3 text-center text-danger small font-weight-bold" id="errorMsg"></p>
+
+        <div class="text-center mt-3">
+          <small class="text-muted">&copy; 2026 Pemerintah Desa Sukamaju</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === KONFIGURASI ===
+    const API_BASE = '';
+
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const userIn = document.getElementById('username').value.trim();
+      const passIn = document.getElementById('password').value.trim();
+
+      // Ambil elemen untuk pesan error & tombol
+      const errorMsg = document.getElementById('errorMsg');
+      const btn = document.getElementById('btnMasuk');
+
+      // 1. Reset Pesan Error
+      if (errorMsg) errorMsg.innerText = '';
+
+      // 2. Ubah Tombol jadi Loading
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Memproses...';
+      btn.disabled = true;
+
+      try {
+        // 3. Kirim ke Server
+        const response = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: userIn, password: passIn })
+        });
+
+        // Cek apakah server mengirim JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Server error (Bukan JSON). Cek terminal backend.");
+        }
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // === LOGIN SUKSES ===
+          btn.innerHTML = '<i class="fas fa-check"></i> Berhasil!';
+          // Ganti warna tombol jadi hijau sukses (CSS Manual biar cantik)
+          btn.style.backgroundColor = '#10b981';
+          btn.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+
+          // Simpan Token
+          sessionStorage.setItem('authToken', data.token);
+          sessionStorage.setItem('staffName', data.name || 'Admin');
+          sessionStorage.setItem('userRole', data.role);
+
+          // Pindah Halaman setelah 0.5 detik
+          setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 500);
+
+        } else {
+          // === LOGIN GAGAL ===
+          throw new Error(data.message || "Username atau Password Salah");
+        }
+
+      } catch (error) {
+        console.error("Login Error:", error);
+
+        // Tampilkan Error di HTML
+        if (errorMsg) errorMsg.innerText = "❌ " + error.message;
+
+        // Kembalikan Tombol seperti semula
+        btn.innerHTML = originalText;
+        btn.style.backgroundColor = ''; // Reset warna
+        btn.style.boxShadow = ''; // Reset shadow
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+
+</html>

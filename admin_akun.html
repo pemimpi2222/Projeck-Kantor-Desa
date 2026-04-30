@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manajemen Akun - Portal Desa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .content-wrapper {
+            background-color: #f4f6f9 !important;
+            min-height: 100vh;
+        }
+
+        .main-header {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        .card {
+            background: #ffffff !important;
+            border: none;
+            border-radius: 16px !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05) !important;
+            margin-bottom: 20px;
+        }
+
+        .table th {
+            border-top: none;
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block"><span
+                        class="nav-link font-weight-bold text-dark">Manajemen Akun Staf</span></li>
+            </ul>
+            <ul class="navbar-nav ml-auto align-items-center">
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <img src="" id="navUserImg" class="user-image img-circle elevation-1" alt="User Image">
+                        <span class="d-none d-md-inline font-weight-bold" id="navUserName">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="user-footer text-center">
+                            <a href="#" onclick="logout()" class="btn btn-danger btn-flat">Keluar Sistem</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link text-center"><span class="brand-text font-weight-bold">PORTAL DESA</span></a>
+            <div class="sidebar">
+                <nav class="mt-3">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+                        <li class="nav-item">
+                            <a href="admin.html" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Beranda</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="admin_surat.html" class="nav-link">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Buat Surat</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="warga.html" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Database Warga</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="riwayat.html" class="nav-link">
+                                <i class="nav-icon fas fa-history"></i>
+                                <p>Riwayat Aktivitas</p>
+                            </a>
+                        </li>
+                        <li class="nav-header mt-2">PENGATURAN</li>
+                        <li class="nav-item">
+                            <a href="admin_akun.html" class="nav-link active">
+                                <i class="nav-icon fas fa-user-cog"></i>
+                                <p>Manajemen Akun</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="content-wrapper">
+            <section class="content pt-4">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div
+                                    class="card-header bg-white pt-4 pb-3 px-4 d-flex justify-content-between align-items-center border-0">
+                                    <h3 class="card-title font-weight-bold"><i
+                                            class="fas fa-users-cog text-primary mr-2"></i> Daftar Akun Sistem</h3>
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#modalTambahAkun">
+                                        <i class="fas fa-plus mr-1"></i> Tambah Akun Baru
+                                    </button>
+                                </div>
+
+                                <div class="modal fade" id="modalResetPassword" tabindex="-1">
+                                    <div class="modal-dialog modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header border-0 pb-0 mt-2 mx-2">
+                                                <h5 class="font-weight-bold">Reset Password</h5>
+                                                <button type="button" class="close"
+                                                    data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <p class="text-muted small">Ubah sandi untuk: <strong
+                                                        id="namaTargetReset"></strong></p>
+                                                <form id="formResetPassword">
+                                                    <input type="hidden" id="idTargetReset">
+                                                    <div class="form-group">
+                                                        <label class="text-muted small">Password Baru</label>
+                                                        <input type="text" id="passwordBaru" class="form-control"
+                                                            required placeholder="Ketik sandi baru...">
+                                                    </div>
+                                                    <button type="submit"
+                                                        class="btn btn-warning btn-block mt-4 py-2 font-weight-bold text-dark">Ubah
+                                                        Password</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body px-4 pb-4 pt-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th width="5%">No</th>
+                                                    <th>Nama Lengkap</th>
+                                                    <th>Username</th>
+                                                    <th>Role</th>
+                                                    <th width="15%" class="text-center">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tabelAkun">
+                                                <tr>
+                                                    <td colspan="5" class="text-center">Memuat data...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalTambahAkun" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0 mt-2 mx-2">
+                    <h5 class="font-weight-bold">Tambah Akun Staf</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formTambahAkun">
+                        <div class="form-group">
+                            <label class="text-muted small">Nama Lengkap (Sesuai KTP)</label>
+                            <input type="text" id="nama_lengkap" class="form-control" required
+                                placeholder="Contoh: Budi Santoso">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-muted small">Username (Untuk Login)</label>
+                            <input type="text" id="username" class="form-control" required
+                                placeholder="Contoh: budi_staf">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-muted small">Password Sementara</label>
+                            <input type="text" id="password" class="form-control" required
+                                placeholder="Minimal 6 karakter">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-muted small">Pilih Jabatan (Role)</label>
+                            <select id="role" class="form-control">
+                                <option value="staf">Staf Pelayanan</option>
+                                <option value="kades">Kepala Desa</option>
+                                <option value="admin">Super Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-4 py-2">Simpan Akun</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    <script>
+        const API_BASE = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('authToken')) { window.location.href = 'index.html'; return; }
+
+            // Set Profil
+            const staffName = sessionStorage.getItem('staffName') || 'Admin';
+            document.getElementById('navUserName').innerText = staffName;
+            document.getElementById('navUserImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=0D8ABC&color=fff`;
+
+            loadAkun();
+        });
+
+        async function loadAkun() {
+            try {
+                const response = await fetch(`${API_BASE}/api/users`, {
+                    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('authToken')}` }
+                });
+                const data = await response.json();
+
+                const tbody = document.getElementById('tabelAkun');
+                tbody.innerHTML = ''; // Kosongkan tulisan "Memuat data..."
+
+                // INI ADALAH KODE LOOPING YANG HILANG SEBELUMNYA
+                data.forEach((user, index) => {
+                    let badgeColor = user.role === 'admin' ? 'danger' : (user.role === 'kades' ? 'success' : 'primary');
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="align-middle">${index + 1}</td>
+                            <td class="font-weight-bold align-middle">${user.nama_lengkap}</td>
+                            <td class="align-middle"><code>${user.username}</code></td>
+                            <td class="align-middle"><span class="badge badge-${badgeColor} px-2 py-1">${user.role.toUpperCase()}</span></td>
+                        
+                            <td class="align-middle">
+                                <div class="d-flex justify-content-end align-items-center pr-3">
+                                    <button class="btn btn-sm btn-outline-warning mr-2 font-weight-bold text-dark" style="width: 85px; white-space: nowrap;" onclick="bukaModalReset(${user.id}, '${user.nama_lengkap}')">
+                                        <i class="fas fa-key"></i> Reset
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger font-weight-bold" style="width: 85px; white-space: nowrap;" onclick="hapusAkun(${user.id}, '${user.nama_lengkap}')">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error(err); // Biar gampang dilacak di inspect element jika ada error lagi
+                alert("Gagal memuat data akun.");
+            }
+        }
+
+        document.getElementById('formTambahAkun').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                nama_lengkap: document.getElementById('nama_lengkap').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Akun berhasil dibuat!');
+                    $('#modalTambahAkun').modal('hide');
+                    document.getElementById('formTambahAkun').reset();
+                    loadAkun(); // Refresh tabel
+                } else {
+                    const err = await response.json();
+                    alert("Gagal: " + err.error);
+                }
+            } catch (err) { alert("Terjadi kesalahan."); }
+        });
+
+        async function hapusAkun(id, nama) {
+            if (confirm(`Yakin ingin mencabut/menghapus akun milik ${nama}?`)) {
+                try {
+                    await fetch(`${API_BASE}/api/users/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${sessionStorage.getItem('authToken')}` }
+                    });
+                    alert('Akun dihapus.');
+                    loadAkun();
+                } catch (err) { alert('Gagal menghapus.'); }
+            }
+        }
+
+        function logout() { if (confirm('Keluar?')) { sessionStorage.clear(); window.location.href = 'index.html'; } }
+
+        // FUNGSI MEMBUKA MODAL RESET
+        function bukaModalReset(id, nama) {
+            document.getElementById('idTargetReset').value = id;
+            document.getElementById('namaTargetReset').innerText = nama;
+            document.getElementById('passwordBaru').value = ''; // Kosongkan input
+            $('#modalResetPassword').modal('show');
+        }
+
+        // FUNGSI MENYIMPAN PASSWORD BARU
+        document.getElementById('formResetPassword').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('idTargetReset').value;
+            const passBaru = document.getElementById('passwordBaru').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/users/${id}/reset`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({ password: passBaru })
+                });
+
+                if (response.ok) {
+                    alert('Password berhasil direset!');
+                    $('#modalResetPassword').modal('hide');
+                } else {
+                    const err = await response.json();
+                    alert("Gagal: " + err.error);
+                }
+            } catch (err) { alert("Terjadi kesalahan koneksi."); }
+        });
+    </script>
+</body>
+
+</html>

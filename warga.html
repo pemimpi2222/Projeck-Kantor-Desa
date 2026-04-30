@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Warga - Portal Desa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <style>
+        /* GLOBAL STYLE */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .content-wrapper {
+            background-color: #f4f6f9 !important;
+            min-height: 100vh;
+        }
+
+        /* Navbar & Card */
+        .main-header {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        .card {
+            background: #ffffff !important;
+            border: none;
+            border-radius: 16px !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* MODAL STYLE */
+        #modalOverlay,
+        #viewWargaModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .adaptive-popup {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            animation: popUp 0.3s ease-out;
+        }
+
+        @keyframes popUp {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .c-header {
+            background: #fff;
+            padding: 20px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .c-body {
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .c-footer {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            text-align: right;
+            border-top: 1px solid #eee;
+            border-radius: 0 0 20px 20px;
+        }
+
+        /* Table & Form */
+        .table thead th {
+            border-top: none;
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            color: #8898aa;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            vertical-align: middle;
+            border-top: 1px solid #f4f6f9;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+
+        .nav-link {
+            outline: none !important;
+        }
+        /* ========================================== */
+        /* STYLE KHUSUS FILTER & PENCARIAN MODERN     */
+        /* ========================================== */
+        .filter-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f0f2f5;
+        }
+        .filter-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .filter-select {
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            color: #495057;
+            font-weight: 500;
+            height: 45px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-select:focus, .filter-select:hover {
+            background-color: #ffffff;
+            border-color: #0066ff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+        .search-box .form-control {
+            height: 45px;
+            background-color: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            font-weight: 500;
+        }
+        .search-box .input-group-text {
+            background-color: #0066ff;
+            color: white;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .search-box .input-group-text:hover {
+            background-color: #0052cc;
+        }
+        .search-box .form-control:focus {
+            background-color: #ffffff;
+            border-color: #0066ff;
+            box-shadow: none;
+        }
+        .search-box .form-control:focus + .input-group-append .input-group-text {
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block"><span class="nav-link font-weight-bold text-dark">Data
+                        Penduduk</span></li>
+            </ul>
+            <ul class="navbar-nav ml-auto align-items-center">
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <img src="" id="navUserImg" class="user-image img-circle elevation-1">
+                        <span class="d-none d-md-inline font-weight-bold" id="navUserName">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="user-header bg-primary">
+                            <img src="" id="dropdownUserImg" class="img-circle elevation-2">
+                            <p><span id="dropdownUserName">Admin</span><small>Petugas Desa Sukamaju</small></p>
+                        </li>
+                        <li class="user-footer">
+                            <a href="#" onclick="logout()" class="btn btn-danger btn-flat float-right">Keluar</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link text-center"><span class="brand-text font-weight-bold">PORTAL DESA</span></a>
+            <div class="sidebar">
+                <nav class="mt-3">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+
+                        <li class="nav-item">
+                            <a href="admin.html" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Beranda</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="admin_surat.html" class="nav-link">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Buat Surat</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="warga.html" class="nav-link active">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Database Warga</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="riwayat.html" class="nav-link">
+                                <i class="nav-icon fas fa-history"></i>
+                                <p>Riwayat Aktivitas</p>
+                            </a>
+                        </li>
+
+                        
+
+                        <li class="nav-header mt-2">PENGATURAN</li>
+                        <li class="nav-item">
+                            <a href="admin_akun.html" class="nav-link">
+                                <i class="nav-icon fas fa-user-cog"></i>
+                                <p>Manajemen Akun</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        </ul>
+        </nav>
+    </div>
+    </aside>
+
+    <div class="content-wrapper">
+        <section class="content">
+            <!-- ========================================== -->
+                <!-- BLOK KONTROL PENCARIAN & FILTER MODERN     -->
+                <!-- ========================================== -->
+                <div class="filter-card p-4 mb-4">
+                    <!-- Baris Atas: Tombol Tab & Tambah Warga -->
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
+                        <div class="btn-group btn-group-toggle shadow-sm mb-3 mb-md-0" data-toggle="buttons" style="border-radius: 10px; overflow: hidden;">
+                            <label class="btn btn-primary active px-4 py-2" id="btnTabActive" onclick="switchTab('active')">
+                                <input type="radio" checked> <i class="fas fa-user-check mr-1"></i> Data Aktif
+                            </label>
+                            <label class="btn btn-light border px-4 py-2 text-muted" id="btnTabDeleted" onclick="switchTab('deleted')">
+                                <input type="radio"> <i class="fas fa-trash-alt mr-1"></i> Sampah
+                            </label>
+                        </div>
+                        <div>
+                            <button class="btn btn-light shadow-sm border font-weight-bold px-3 py-2 mr-2" onclick="resetFilter()" style="border-radius: 10px;" title="Bersihkan semua filter pencarian">
+                                <i class="fas fa-sync-alt text-muted mr-1"></i> Reset
+                            </button>
+                            <button class="btn btn-success shadow-sm font-weight-bold px-4 py-2" onclick="bukaModal()" style="border-radius: 10px;">
+                                <i class="fas fa-user-plus mr-2"></i> Tambah Warga
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Baris Bawah: Dropdown Filter & Kolom Pencarian -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+                            <label class="filter-label"><i class="fas fa-graduation-cap text-primary mr-1"></i> Pendidikan</label>
+                            <select id="filterPendidikan" class="form-control filter-select" onchange="cariLocal()">
+                                <option value="">Semua Jenjang</option>
+                                <option value="Tidak/Belum Sekolah">Tidak/Belum Sekolah</option>
+                                <option value="SD/Sederajat">SD/Sederajat</option>
+                                <option value="SMP/Sederajat">SMP/Sederajat</option>
+                                <option value="SMA/Sederajat">SMA/Sederajat</option>
+                                <option value="Diploma">Diploma (D1-D4)</option>
+                                <option value="Sarjana (S1)">Sarjana (S1)</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+                            <label class="filter-label"><i class="fas fa-ring text-success mr-1"></i> Pernikahan</label>
+                            <select id="filterStatus" class="form-control filter-select" onchange="cariLocal()">
+                                <option value="">Semua Status</option>
+                                <option value="Belum Kawin">Belum Menikah</option>
+                                <option value="Kawin">Sudah Menikah</option>
+                                <option value="Cerai Hidup">Cerai Hidup</option>
+                                <option value="Cerai Mati">Cerai Mati</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3 mb-md-0">
+                            <label class="filter-label"><i class="fas fa-briefcase text-warning mr-1"></i> Pekerjaan</label>
+                            <select id="filterPekerjaan" class="form-control filter-select" onchange="cariLocal()">
+                                <option value="">Semua Pekerjaan</option>
+                                <option value="Belum/Tidak Bekerja">Belum/Tidak Bekerja</option>
+                                <option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option>
+                                <option value="Mengurus Rumah Tangga">Mengurus Rumah Tangga</option>
+                                <option value="Petani/Pekebun">Petani/Pekebun</option>
+                                <option value="Wiraswasta">Wiraswasta</option>
+                                <option value="Karyawan Swasta">Karyawan Swasta</option>
+                                <option value="PNS/TNI/POLRI">PNS/TNI/POLRI</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label class="filter-label"><i class="fas fa-search text-info mr-1"></i> Cari Spesifik</label>
+                            <div class="input-group search-box">
+                                <input type="text" id="searchWarga" class="form-control shadow-none" placeholder="Ketik NIK atau Nama..." onkeyup="cariLocal('teks')">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ========================================== -->
+                
+                <!-- Di bawah ini adalah <div class="card"> tempat tabel berada -->
+
+                <div class="card">
+                    <div class="card-body bg-light border-bottom">
+                    <div class="row">
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <select id="filterPendidikan" class="form-control filter-select" onchange="cariLocal('dropdown')">
+                                <option value="">-- Semua Jenjang Pendidikan --</option>
+                                <option value="Tidak/Belum Sekolah">Tidak/Belum Sekolah</option>
+                                <option value="SD/Sederajat">SD/Sederajat</option>
+                                <option value="SMP/Sederajat">SMP/Sederajat</option>
+                                <option value="SMA/Sederajat">SMA/Sederajat</option>
+                                <option value="Diploma">Diploma (D1-D4)</option>
+                                <option value="Sarjana (S1)">Sarjana (S1)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <select id="filterStatus" class="form-control filter-select" onchange="cariLocal('dropdown')">
+                                <option value="">-- Semua Status Pernikahan --</option>
+                                <option value="Belum Kawin">Belum Kawin</option>
+                                <option value="Kawin">Sudah Menikah</option>
+                                <option value="Cerai Hidup">Cerai Hidup</option>
+                                <option value="Cerai Mati">Cerai Mati</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="filterPekerjaan" class="form-control filter-select" onchange="cariLocal('dropdown')">
+                                <option value="">-- Semua Pekerjaan --</option>
+                                <option value="Belum/Tidak Bekerja">Belum/Tidak Bekerja</option>
+                                <option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option>
+                                <option value="Mengurus Rumah Tangga">Mengurus Rumah Tangga</option>
+                                <option value="Petani/Pekebun">Petani/Pekebun</option>
+                                <option value="Wiraswasta">Wiraswasta</option>
+                                <option value="Karyawan Swasta">Karyawan Swasta</option>
+                                <option value="PNS/TNI/POLRI">PNS/TNI/POLRI</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>NIK</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Alamat</th>
+                                    <th>No. HP</th>
+                                    <th>Pekerjaan</th>
+                                    <th>Status</th>
+                                    <th class="text-center" id="headerAksi">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="main-footer text-sm border-top-0">
+        <strong>&copy; <span id="year"></span> Pemerintah Desa Sukamaju</strong>
+    </footer>
+    </div>
+
+    <div id="modalOverlay">
+        <div class="adaptive-popup popup-animation">
+            <div class="c-header">
+                <span id="modalTitle"><i class="fas fa-user-plus mr-2 text-primary"></i> Tambah Warga Baru</span>
+                <button onclick="tutupModal()" style="background:none;border:none;cursor:pointer;"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="c-body">
+                <form id="wargaForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group"><label>NIK <span class="text-danger">*</span></label><input
+                                    type="text" class="form-control" id="w_nik" required></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Nama Lengkap <span class="text-danger">*</span></label><input
+                                    type="text" class="form-control" id="w_nama" required></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Nomor KK</label><input type="text" class="form-control"
+                                    id="w_nomor_kk"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label>No. HP</label><input type="text" class="form-control"
+                                    id="w_no_hp"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Tempat Lahir</label><input type="text" class="form-control"
+                                    id="w_tempat_lahir"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Tanggal Lahir</label><input type="date" class="form-control"
+                                    id="w_tanggal_lahir"></div>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Alamat</label><textarea class="form-control" id="w_alamat"
+                            rows="2"></textarea></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Pekerjaan</label>
+                                <select class="form-control" id="w_pekerjaan">
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Belum/Tidak Bekerja">Belum/Tidak Bekerja</option>
+                                    <option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option>
+                                    <option value="Mengurus Rumah Tangga">Mengurus Rumah Tangga</option>
+                                    <option value="Petani/Pekebun">Petani/Pekebun</option>
+                                    <option value="Wiraswasta">Wiraswasta</option>
+                                    <option value="Karyawan Swasta">Karyawan Swasta</option>
+                                    <option value="PNS/TNI/POLRI">PNS/TNI/POLRI</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Pendidikan Terakhir</label>
+                                <select class="form-control" id="w_pendidikan">
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Tidak/Belum Sekolah">Tidak/Belum Sekolah</option>
+                                    <option value="SD/Sederajat">SD/Sederajat</option>
+                                    <option value="SMP/Sederajat">SMP/Sederajat</option>
+                                    <option value="SMA/Sederajat">SMA/Sederajat</option>
+                                    <option value="Diploma">Diploma (D1-D4)</option>
+                                    <option value="Sarjana (S1)">Sarjana (S1)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Status Perkawinan</label>
+                                <select class="form-control" id="w_status_perkawinan">
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Kawin">Sudah Menikah</option>
+                                    <option value="Belum Kawin">Belum Menikah</option>
+                                    <option value="Cerai Hidup">Cerai Hidup</option>
+                                    <option value="Cerai Mati">Cerai Mati</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Agama</label>
+                                <select class="form-control" id="w_agama">
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddha">Buddha</option>
+                                    <option value="Konghucu">Konghucu</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label>Jenis Kelamin</label>
+                                <select class="form-control" id="w_jenis_kelamin">
+                                    <option value="L">Laki-laki</option>
+                                    <option value="P">Perempuan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Keterangan</label><textarea class="form-control" id="w_keterangan"
+                            rows="2"></textarea></div>
+                </form>
+            </div>
+            <div class="c-footer">
+                <button type="button" class="btn btn-light border mr-2" onclick="tutupModal()">Batal</button>
+                <button type="button" class="btn btn-primary" id="btnSimpan" onclick="simpanData()"><i
+                        class="fas fa-save mr-1"></i> Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewWargaModal"
+        style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div class="adaptive-popup"
+            style="background:white; padding:20px; border-radius:12px; width:90%; max-width:500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <div class="c-header"
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee;">
+                <span style="font-size:1.2rem; font-weight:bold; color:#007bff;"><i class="fas fa-id-card mr-2"></i>
+                    Biodata Warga</span>
+                <button onclick="closeViewModal()"
+                    style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
+            </div>
+            <div class="c-body" style="font-size:0.95rem; line-height:1.8;">
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">NIK</div>
+                    <div class="col-8 font-weight-bold" id="v_nik"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">Nama</div>
+                    <div class="col-8 font-weight-bold" id="v_nama"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">TTL</div>
+                    <div class="col-8" id="v_ttl"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">Pendidikan</div>
+                    <div class="col-8" id="v_pendidikan"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">J. Kelamin</div>
+                    <div class="col-8" id="v_jk"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">Agama</div>
+                    <div class="col-8" id="v_agama"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">Pekerjaan</div>
+                    <div class="col-8" id="v_kerja"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">Status</div>
+                    <div class="col-8" id="v_status"></div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-4 text-muted">Alamat</div>
+                    <div class="col-8" id="v_alamat"></div>
+                </div>
+            </div>
+            <div class="c-footer" style="text-align:right; border-top:1px solid #eee; padding-top:15px;">
+                <button onclick="closeViewModal()" class="btn btn-secondary btn-sm mr-2">Tutup</button>
+                <button id="btnCetakWarga" class="btn btn-primary btn-sm"><i class="fas fa-print mr-1"></i> Cetak
+                    Biodata</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    <script>
+        const API_BASE = '';
+        let isOnline = navigator.onLine;
+        let editingId = null;
+        let allWarga = [];
+        let currentTab = 'active';
+
+        async function fetchAuth(url, options = {}) {
+            const token = sessionStorage.getItem('authToken');
+            if (!options.headers) options.headers = {};
+            if (token) options.headers['Authorization'] = `Bearer ${token}`;
+            const response = await fetch(url, options);
+            if (response.status === 401) { window.location.href = 'index.html'; throw new Error("Unauthorized"); }
+            return response;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('authToken')) { window.location.href = 'index.html'; return; }
+            document.getElementById('year').innerText = new Date().getFullYear();
+            updateOnlineStatus();
+
+            const staffName = sessionStorage.getItem('staffName') || 'Admin';
+            if (document.getElementById('navUserName')) document.getElementById('navUserName').innerText = staffName;
+            if (document.getElementById('dropdownUserName')) document.getElementById('dropdownUserName').innerText = staffName;
+            document.getElementById('navUserImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=007bff&color=fff&bold=true`;
+
+            loadWarga();
+
+            setInterval(() => {
+                const m1 = document.getElementById('modalOverlay').style.display === 'flex';
+                const m2 = document.getElementById('viewWargaModal').style.display === 'flex';
+                if (isOnline && !m1 && !m2 && document.getElementById('searchWarga').value === '') loadWarga(true);
+            }, 5000);
+        });
+
+        function loadWarga(isAuto = false) {
+            if (!isOnline) return;
+            const queryParam = currentTab === 'deleted' ? '?deleted=true' : '';
+            const tbody = document.getElementById('tableBody');
+            
+            if (!isAuto) tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5"><i class="fas fa-spinner fa-spin text-primary"></i> Memuat data...</td></tr>';
+            
+            fetchAuth(`${API_BASE}/api/warga${queryParam}`)
+                .then(r => r.json())
+                .then(data => {
+                    allWarga = data || [];
+                    
+                    // PERBAIKAN: Gunakan fungsi cariLocal() di sini
+                    // Agar setiap kali data ditarik dari server (meski auto-refresh 5 detik),
+                    // sistem akan tetap menerapkan filter pendidikan, pekerjaan, dll yang sedang aktif.
+                    cariLocal(); 
+                })
+                .catch(e => { 
+                    if (!isAuto) tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Gagal koneksi server</td></tr>'; 
+                });
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-5">${currentTab === 'deleted' ? 'Sampah kosong' : 'Belum ada data'}</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map((w, i) => {
+                let buttons = '';
+                if (currentTab === 'deleted') {
+                    buttons = `<div class="btn-group btn-group-sm">
+                        <button class="btn btn-success" onclick="restoreWarga(${w.id})"><i class="fas fa-trash-restore"></i></button>
+                        <button class="btn btn-danger" onclick="deletePermanent(${w.id})"><i class="fas fa-times"></i></button></div>`;
+                } else {
+                    buttons = `<div class="btn-group btn-group-sm">
+                        <button onclick='lihatWarga(${JSON.stringify(w)})' class="btn btn-info" title="Lihat"><i class="fas fa-eye"></i></button>
+                        <button onclick='editWarga(${w.id})' class="btn btn-warning" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteWarga(${w.id})" class="btn btn-danger" title="Hapus"><i class="fas fa-trash"></i></button></div>`;
+                }
+
+                return `<tr>
+                    <td>${i + 1}</td>
+                    <td><strong>${w.nik}</strong></td>
+                    <td>${w.nama}</td>
+                    <td>${w.alamat || '-'}</td>
+                    <td>${w.no_hp || '-'}</td>
+                    <td>${w.pekerjaan || '-'}</td>
+                    <td>${w.status_perkawinan || w.status_pernikahan || '-'}</td>
+                    <td class="text-center">${buttons}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function cariLocal(sumber = '') {
+            const inputSearch = document.getElementById('searchWarga');
+            const elPend = document.getElementById('filterPendidikan');
+            const elStat = document.getElementById('filterStatus');
+            const elPek = document.getElementById('filterPekerjaan');
+
+            // 1. LOGIKA SALING MENGALAHKAN (MUTUAL OVERRIDE)
+            if (sumber === 'teks') {
+                // Jika sedang mengetik nama/NIK, otomatis reset semua dropdown ke "Semua"
+                elPend.value = "";
+                elStat.value = "";
+                elPek.value = "";
+            } else if (sumber === 'dropdown') {
+                // Jika sedang memilih dropdown, bersihkan kotak pencarian teks
+                inputSearch.value = "";
+            }
+
+            // 2. AMBIL NILAI TERBARU
+            const query = inputSearch.value.toLowerCase();
+            const fPend = elPend.value;
+            const fStat = elStat.value;
+            const fPek = elPek.value;
+
+            // 3. PROSES PENYARINGAN
+            const filtered = allWarga.filter(w => {
+                // JIKA MENGGUNAKAN PENCARIAN SPESIFIK: Cari ke semua data tanpa peduli dropdown
+                if (query !== "") {
+                    return w.nama.toLowerCase().includes(query) || w.nik.toLowerCase().includes(query);
+                } 
+                // JIKA MENGGUNAKAN DROPDOWN: Gabungkan ketiga filternya
+                else {
+                    const pendWarga = w.pendidikan || '';
+                    const statWarga = w.status_perkawinan || w.status_pernikahan || '';
+                    const pekWarga = w.pekerjaan || '';
+
+                    const matchPend = fPend === "" || pendWarga === fPend;
+                    const matchStat = fStat === "" || statWarga === fStat;
+                    const matchPek = fPek === "" || pekWarga === fPek;
+
+                    return matchPend && matchStat && matchPek;
+                }
+            });
+            
+            renderTable(filtered);
+        }
+
+        
+        // Fungsi untuk mengosongkan semua filter pencarian
+        function resetFilter() {
+            // 1. Kosongkan kotak pencarian teks
+            document.getElementById('searchWarga').value = "";
+            
+            // 2. Kembalikan semua dropdown ke pilihan pertama ("")
+            document.getElementById('filterPendidikan').value = "";
+            document.getElementById('filterStatus').value = "";
+            document.getElementById('filterPekerjaan').value = "";
+            
+            // 3. Panggil ulang fungsi pencarian agar tabel kembali menampilkan semua data
+            cariLocal(); 
+        }
+
+        // --- MODAL UTAMA ---
+        function bukaModal() { resetForm(); document.getElementById('modalOverlay').style.display = 'flex'; }
+        function tutupModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+        function resetForm() {
+            document.getElementById('wargaForm').reset();
+            editingId = null;
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus mr-2 text-primary"></i> Tambah Warga Baru';
+            const btn = document.getElementById('btnSimpan');
+            btn.innerHTML = '<i class="fas fa-save mr-1"></i> Simpan'; btn.classList.remove('btn-warning'); btn.classList.add('btn-primary');
+        }
+
+        // --- SIMPAN DATA ---
+        async function simpanData() {
+            const data = {
+                pendidikan: document.getElementById('w_pendidikan').value,
+                nik: document.getElementById('w_nik').value.trim(),
+                nama: document.getElementById('w_nama').value.trim(),
+                alamat: document.getElementById('w_alamat').value,
+                nomor_kk: document.getElementById('w_nomor_kk').value,
+                no_hp: document.getElementById('w_no_hp').value,
+                pekerjaan: document.getElementById('w_pekerjaan').value,
+                status_perkawinan: document.getElementById('w_status_perkawinan').value,
+                jenis_kelamin: document.getElementById('w_jenis_kelamin').value,
+                agama: document.getElementById('w_agama').value,
+                keterangan: document.getElementById('w_keterangan').value,
+                tempat_lahir: document.getElementById('w_tempat_lahir').value,
+                tanggal_lahir: document.getElementById('w_tanggal_lahir').value
+            };
+
+            if (!data.nik || !data.nama) { alert('NIK dan Nama wajib diisi!'); return; }
+
+            const method = editingId ? 'PUT' : 'POST';
+            const url = editingId ? `${API_BASE}/api/warga/${editingId}` : `${API_BASE}/api/warga`;
+
+            try {
+                const response = await fetchAuth(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) { tutupModal(); loadWarga(); }
+                else { const res = await response.json(); alert('Gagal: ' + (res.message || res.error)); }
+            } catch (e) { console.error(e); }
+        }
+
+        // --- EDIT DATA ---
+        window.editWarga = (id) => {
+            const w = allWarga.find(x => x.id === id);
+            if (!w) return;
+            document.getElementById('w_nik').value = w.nik || '';
+            document.getElementById('w_nama').value = w.nama || '';
+            document.getElementById('w_alamat').value = w.alamat || '';
+            document.getElementById('w_nomor_kk').value = w.nomor_kk || '';
+            document.getElementById('w_no_hp').value = w.no_hp || '';
+            document.getElementById('w_pekerjaan').value = w.pekerjaan || '';
+            document.getElementById('w_pendidikan').value = w.pendidikan || '';
+            document.getElementById('w_status_perkawinan').value = w.status_perkawinan || '';
+            document.getElementById('w_jenis_kelamin').value = w.jenis_kelamin || 'L';
+            document.getElementById('w_agama').value = w.agama || '';
+            document.getElementById('w_keterangan').value = w.keterangan || '';
+            document.getElementById('w_tempat_lahir').value = w.tempat_lahir || '';
+
+            if (w.tanggal_lahir) {
+                const d = new Date(w.tanggal_lahir);
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                document.getElementById('w_tanggal_lahir').value = `${yyyy}-${mm}-${dd}`;
+            }
+
+            editingId = id;
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-edit mr-2 text-warning"></i> Edit Data Warga';
+            const btn = document.getElementById('btnSimpan');
+            btn.innerHTML = '<i class="fas fa-save mr-1"></i> Update'; btn.classList.remove('btn-primary'); btn.classList.add('btn-warning');
+            document.getElementById('modalOverlay').style.display = 'flex';
+        };
+
+        // --- LIHAT & CETAK ---
+        window.lihatWarga = (data) => {
+            document.getElementById('v_pendidikan').innerText = data.pendidikan || '-';
+            document.getElementById('v_nik').innerText = data.nik || '-';
+            document.getElementById('v_nama').innerText = data.nama || '-';
+
+            let tgl = '-';
+            if (data.tanggal_lahir) {
+                tgl = new Date(data.tanggal_lahir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            document.getElementById('v_ttl').innerText = (data.tempat_lahir || '') + ' ' + tgl;
+            document.getElementById('v_jk').innerText = data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+            document.getElementById('v_agama').innerText = data.agama || '-';
+            document.getElementById('v_kerja').innerText = data.pekerjaan || '-';
+            document.getElementById('v_status').innerText = data.status_perkawinan || '-';
+            document.getElementById('v_alamat').innerText = data.alamat || '-';
+
+            document.getElementById('btnCetakWarga').onclick = function () { cetakBiodata(data); };
+            document.getElementById('viewWargaModal').style.display = 'flex';
+        }
+
+        window.closeViewModal = () => { document.getElementById('viewWargaModal').style.display = 'none'; }
+
+        function cetakBiodata(data) {
+            let tgl = '-';
+            if (data.tanggal_lahir) tgl = new Date(data.tanggal_lahir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const html = `
+            <div style="font-family:'Times New Roman';padding:1cm;">
+                <div style="text-align:center;border-bottom:3px double black;margin-bottom:20px;">
+                    <h3 style="margin:0">PEMERINTAH KABUPATEN KUANTAN SINGINGI</h3>
+                    <h2 style="margin:0">DESA SUKAMAJU</h2>
+                </div>
+                <div style="text-align:center;margin-bottom:30px;"><h3 style="text-decoration:underline;">BIODATA PENDUDUK</h3></div>
+                <table style="width:100%;font-size:12pt;">
+                    <tr><td style="width:200px">NIK</td><td>: ${data.nik}</td></tr>
+                    <tr><td>Nama</td><td>: <b>${data.nama.toUpperCase()}</b></td></tr>
+                    <tr><td>TTL</td><td>: ${data.tempat_lahir}, ${tgl}</td></tr>
+                    <tr><td>J. Kelamin</td><td>: ${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</td></tr>
+                    <tr><td>Agama</td><td>: ${data.agama}</td></tr>
+                    <tr><td>Status</td><td>: ${data.status_perkawinan}</td></tr>
+                    <tr><td>Pekerjaan</td><td>: ${data.pekerjaan}</td></tr>
+                    <tr><td>Alamat</td><td>: ${data.alamat}</td></tr>
+                </table>
+            </div>`;
+            const win = window.open('', '', 'height=600,width=800');
+            win.document.write(`<html><body onload="window.print();window.close()">${html}</body></html>`);
+            win.document.close();
+        }
+
+        // --- HAPUS / RESTORE ---
+        window.deleteWarga = async (id) => { if (confirm('Pindahkan ke sampah?')) await sendRequest(`${API_BASE}/api/warga/${id}`, 'DELETE'); };
+        window.restoreWarga = async (id) => { if (confirm("Pulihkan data?")) await sendRequest(`${API_BASE}/api/warga/${id}/restore`, 'PUT'); };
+        window.deletePermanent = async (id) => { if (confirm("Hapus Permanen?")) await sendRequest(`${API_BASE}/api/warga/${id}/permanen`, 'DELETE'); };
+
+        async function sendRequest(url, method) {
+            try { const r = await fetchAuth(url, { method: method }); if (r.ok) loadWarga(); } catch (e) { alert("Error"); }
+        }
+
+        window.switchTab = (tab) => {
+            currentTab = tab;
+            const b1 = document.getElementById('btnTabActive'); const b2 = document.getElementById('btnTabDeleted');
+            if (tab === 'active') {
+                b1.classList.add('active', 'btn-primary'); b1.classList.remove('btn-light', 'border');
+                b2.classList.remove('active', 'btn-primary'); b2.classList.add('btn-light', 'border');
+                document.getElementById('headerAksi').innerText = 'Aksi';
+            } else {
+                b2.classList.add('active', 'btn-primary'); b2.classList.remove('btn-light', 'border');
+                b1.classList.remove('active', 'btn-primary'); b1.classList.add('btn-light', 'border');
+                document.getElementById('headerAksi').innerText = 'Aksi (Restore)';
+            }
+            loadWarga();
+        };
+
+        window.addEventListener('online', () => { isOnline = true; updateOnlineStatus(); loadWarga(); });
+        window.addEventListener('offline', () => { isOnline = false; updateOnlineStatus(); });
+        function updateOnlineStatus() { const el = document.getElementById('onlineStatus'); if (el) el.textContent = isOnline ? 'Online' : 'Offline'; }
+
+        function logout() { if (confirm('Keluar sistem?')) { sessionStorage.removeItem('authToken'); window.location.href = 'index.html'; } }
+
+        // ==========================================
+        // FITUR KEAMANAN: IDLE TIMEOUT (AUTO-LOGOUT)
+        // ==========================================
+        
+        // Atur batas waktu menganggur (dalam milidetik)
+        // Contoh: 15 Menit = 15 * 60 * 1000 = 900000 ms. 
+        // Untuk testing, ubah sementara jadi 10000 (10 detik)
+        const IDLE_TIMEOUT = 15 * 60 * 1000; 
+        let idleTimer;
+
+        // Fungsi untuk mereset timer setiap kali ada pergerakan
+        function resetIdleTimer() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(autoLogout, IDLE_TIMEOUT);
+        }
+
+        // Fungsi yang mengeksekusi pengeluaran paksa
+        function autoLogout() {
+            sessionStorage.clear(); // Hapus kunci login
+            alert("Sesi Anda telah berakhir karena tidak ada aktivitas selama 15 menit. Demi keamanan, silakan login kembali.");
+            window.location.href = 'index.html'; // Lempar ke halaman depan
+        }
+
+        // Daftar sensor untuk mendeteksi keberadaan staf di depan layar
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+        window.addEventListener('scroll', resetIdleTimer);
+
+        // Jalankan timer pertama kali saat halaman dibuka
+        resetIdleTimer();
+    </script>
+</body>
+
+</html>

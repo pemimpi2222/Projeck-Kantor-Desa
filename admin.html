@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin - Portal Desa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        /* Modal Overlay & Popup */
+        #customOverlay,
+        #editOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .adaptive-popup {
+            background: white;
+            width: 90%;
+            max-width: 550px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: popUp 0.3s ease-out;
+        }
+
+        @keyframes popUp {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Detail Styling */
+        .c-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .c-body {
+            padding: 25px;
+            max-height: 70vh;
+            overflow-y: auto;
+            font-size: 0.95rem;
+        }
+
+        .c-footer {
+            padding: 15px 25px;
+            background: #f8f9fa;
+            text-align: right;
+            border-top: 1px solid #eee;
+        }
+
+        .c-row {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+
+        .c-label {
+            width: 130px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .c-val {
+            flex: 1;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Helper Classes */
+        .btn {
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background-color: #0066ff;
+            border-color: #0066ff;
+        }
+
+        .nav-link {
+            outline: none !important;
+        }
+
+        /* ========================================= */
+        /* 4. RESPONSIVE MOBILE (KHUSUS HP)          */
+        /* ========================================= */
+        @media (max-width: 576px) {
+
+            /* 1. Kecilkan Tombol Masuk/Sampah */
+            #btnTabActive,
+            #btnTabDeleted {
+                padding: 6px 10px !important;
+                /* Spasi dalam lebih tipis */
+                font-size: 0.8rem !important;
+                /* Tulisan lebih kecil */
+                width: 100%;
+                /* Agar tombol rata memenuhi kotak */
+            }
+
+            /* 2. Kecilkan Ikon di dalam tombol */
+            #btnTabActive i,
+            #btnTabDeleted i {
+                font-size: 0.8rem !important;
+                margin-right: 3px !important;
+            }
+
+            /* 3. Atur wadah tombol agar jejer rapi */
+            .btn-group-toggle {
+                display: flex;
+                width: 70%;
+                /* Ambil 70% lebar layar */
+            }
+
+            .btn-group-toggle label {
+                flex: 1;
+                /* Bagi dua sama rata */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* 4. Tombol Refresh di sebelahnya juga disesuaikan */
+            .card-header button.btn-light {
+                padding: 6px 12px !important;
+                font-size: 0.85rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block"><span
+                        class="nav-link font-weight-bold text-dark">Dashboard</span></li>
+            </ul>
+            <ul class="navbar-nav ml-auto align-items-center">
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff"
+                            class="user-image img-circle elevation-1" alt="User">
+                        <span class="d-none d-md-inline font-weight-bold" id="navUserName">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="user-footer">
+                            <a href="#" onclick="sessionStorage.clear(); window.location.href='index.html'"
+                                class="btn btn-danger btn-block"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link text-center"><span class="brand-text font-weight-bold">PORTAL DESA</span></a>
+            <div class="sidebar">
+                <nav class="mt-3">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+
+                        <li class="nav-item">
+                            <a href="admin.html" class="nav-link active">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Beranda</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="admin_surat.html" class="nav-link">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Buat Surat</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="warga.html" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Database Warga</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="riwayat.html" class="nav-link">
+                                <i class="nav-icon fas fa-history"></i>
+                                <p>Riwayat Aktivitas</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-header mt-2" id="headerPengaturan">PENGATURAN</li>
+                        <li class="nav-item" id="menuPengaturan">
+                            <a href="admin_akun.html" class="nav-link">
+                                <i class="nav-icon fas fa-user-cog"></i>
+                                <p>Manajemen Akun</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="content-wrapper">
+            <section class="content">
+                <div class="container-fluid pt-4">
+                    <div class="row mb-4">
+                        <div class="col-lg-4 col-6">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3 id="statWarga">0</h3>
+                                    <p>Total Warga</p>
+                                </div>
+                                <div class="icon"><i class="fas fa-users"></i></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3 id="statSurat">0</h3>
+                                    <p>Surat Bulan Ini</p>
+                                </div>
+                                <div class="icon"><i class="fas fa-file-alt"></i></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    <h3 id="statPending">0</h3>
+                                    <p>Perlu Persetujuan</p>
+                                </div>
+                                <div class="icon"><i class="fas fa-clock"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header border-0 bg-transparent">
+                                    <h3 class="card-title font-weight-bold"><i
+                                            class="fas fa-chart-line mr-2 text-primary"></i> Statistik Permohonan</h3>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <canvas id="suratChart" height="250" style="max-height: 250px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-primary active px-4" id="btnTabActive"
+                                    onclick="switchTab('active')">
+                                    <input type="radio" checked> <i class="fas fa-inbox mr-1"></i> Masuk
+                                </label>
+                                <label class="btn btn-light border px-4" id="btnTabDeleted"
+                                    onclick="switchTab('deleted')">
+                                    <input type="radio"> <i class="fas fa-trash mr-1"></i> Sampah
+                                </label>
+                            </div>
+                            <button class="btn btn-light border" onclick="loadData(); loadStatistik();"><i
+                                    class="fas fa-sync-alt text-primary"></i></button>
+                        </div>
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover text-nowrap">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Pemohon</th>
+                                        <th>Jenis Surat</th>
+                                        <th>Tanggal</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="main-footer text-sm border-top-0">
+            <strong>&copy; 2026 Pemerintah Desa Sukamaju</strong>
+        </footer>
+    </div>
+
+    <div id="customOverlay">
+        <div id="customBox" class="adaptive-popup">
+            <div class="c-header">
+                <span><i class="fas fa-file-alt mr-2 text-primary"></i> Detail Surat Lengkap</span>
+                <button onclick="document.getElementById('customOverlay').style.display='none'"
+                    style="background:none;border:none;cursor:pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="c-body">
+                <div class="c-row">
+                    <div class="c-label">Nama</div>
+                    <div class="c-val" id="c_nama"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">NIK</div>
+                    <div class="c-val" id="c_nik"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">TTL</div>
+                    <div class="c-val" id="c_ttl"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">Kelamin</div>
+                    <div class="c-val" id="c_jk"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">Agama</div>
+                    <div class="c-val" id="c_agama"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">Pekerjaan</div>
+                    <div class="c-val" id="c_kerja"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">Status</div>
+                    <div class="c-val" id="c_status"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">Jenis</div>
+                    <div class="c-val" id="c_jenis"></div>
+                </div>
+                <div class="c-row">
+                    <div class="c-label">Tujuan</div>
+                    <div class="c-val" id="c_tujuan"></div>
+                </div>
+                <div class="c-row" style="border:none;">
+                    <div class="c-label">Alamat</div>
+                    <div class="c-val" id="c_alamat"></div>
+                </div>
+            </div>
+            <div class="c-footer">
+                <button onclick="document.getElementById('customOverlay').style.display='none'"
+                    class="btn btn-light border mr-2">Tutup</button>
+                <button class="btn btn-primary" onclick="cetakSuratSaatIni()">
+                    <i class="fas fa-print mr-1"></i> Cetak Surat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editOverlay">
+        <div class="adaptive-popup">
+            <div class="c-header bg-warning text-dark">
+                <span><i class="fas fa-edit mr-2"></i> Edit Data Surat</span>
+                <button onclick="document.getElementById('editOverlay').style.display='none'"
+                    style="background:none;border:none;cursor:pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="c-body">
+                <input type="hidden" id="edit_id">
+                <div class="form-group"><label>Nomor Urut</label><input type="number" class="form-control"
+                        id="edit_nomor_urut" style="background:#fff3cd;"></div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group"><label>Nama</label><input type="text" class="form-control"
+                                id="edit_nama"></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group"><label>NIK</label><input type="text" class="form-control" id="edit_nik">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group"><label>Jenis Surat</label><select class="form-control" id="edit_jenis">
+                        <option value="sku">SKU (Usaha)</option>
+                        <option value="skd">SKD (Domisili)</option>
+                    </select></div>
+                <div class="form-group"><label>Nama Usaha</label><input type="text" class="form-control"
+                        id="edit_usaha"></div>
+                <div class="form-group"><label>Tanggal Surat</label><input type="date" class="form-control"
+                        id="edit_tanggal"></div>
+                <div class="form-group"><label>Alamat</label><textarea class="form-control" id="edit_alamat"
+                        rows="2"></textarea></div>
+            </div>
+            <div class="c-footer">
+                <button onclick="document.getElementById('editOverlay').style.display='none'"
+                    class="btn btn-light border mr-2">Batal</button>
+                <button onclick="simpanPerubahan()" class="btn btn-primary px-4"><i class="fas fa-save mr-1"></i>
+                    Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    <script>
+        const API_BASE = '';
+        let currentTab = 'active';
+        let idSuratSedangDibuka = null;
+        let idSuratSedangDiedit = null;
+
+        function formatTanggalIndo(isoString) {
+            if (!isoString) return '-';
+            const date = new Date(isoString);
+            return isNaN(date) ? isoString : date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        async function fetchAuth(url, options = {}) {
+            const token = sessionStorage.getItem('authToken');
+            if (!options.headers) options.headers = {};
+            if (token) options.headers['Authorization'] = `Bearer ${token}`;
+            return fetch(url, options);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('authToken')) { window.location.href = 'index.html'; return; }
+
+            const staffName = sessionStorage.getItem('staffName') || 'Admin';
+            document.getElementById('navUserName').innerText = sessionStorage.getItem('staffName') || 'Admin';
+
+            const userRole = sessionStorage.getItem('userRole');
+            if (userRole !== 'admin' && userRole !== 'kades') {
+                const headerLog = document.getElementById('headerPengaturan');
+                const menuLog = document.getElementById('menuPengaturan');
+                if (headerLog) headerLog.style.display = 'none';
+                if (menuLog) menuLog.style.display = 'none';
+            }
+
+            loadData();
+            loadStatistik();
+        });
+
+        function loadData() {
+            const tbody = document.getElementById('tableBody');
+            const query = currentTab === 'deleted' ? '?deleted=true' : '';
+
+            fetchAuth(API_BASE + '/api/surat' + query)
+                .then(r => r.json())
+                .then(data => {
+                    window._tableData = data;
+                    if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5">Data Kosong</td></tr>`; return; }
+
+                    tbody.innerHTML = data.map((s, i) => {
+                        let badge = s.status === 'disetujui' ? '<span class="badge badge-success p-2">Selesai</span>' :
+                            (s.status === 'pending' ? '<span class="badge badge-warning p-2">Pending</span>' : '<span class="badge badge-secondary">Draft</span>');
+
+                        let buttons = '';
+                        if (currentTab === 'deleted') {
+                            buttons = `<button class="btn btn-sm btn-success mr-1" onclick="restoreSurat(${s.id})"><i class="fas fa-trash-restore"></i></button>
+                                       <button class="btn btn-sm btn-danger" onclick="deletePermanent(${s.id})"><i class="fas fa-times"></i></button>`;
+                        } else {
+                            let btnToggle = s.status === 'pending'
+                                ? `<button class="btn btn-sm btn-success" onclick="ubahStatus(${s.id}, 'disetujui')" title="Setujui"><i class="fas fa-check"></i></button>`
+                                : `<button class="btn btn-sm btn-warning" onclick="ubahStatus(${s.id}, 'pending')" title="Batal"><i class="fas fa-undo"></i></button>`;
+
+                            buttons = `<button class="btn btn-sm btn-info" onclick="viewDetail(${s.id})"><i class="fas fa-eye"></i></button>
+                                       <button class="btn btn-sm btn-warning mx-1" onclick="bukaEditModal(${s.id})"><i class="fas fa-edit"></i></button>
+                                       ${btnToggle}
+                                       <button class="btn btn-sm btn-danger ml-1" onclick="moveToTrash(${s.id})"><i class="fas fa-trash"></i></button>`;
+                        }
+
+                        return `<tr>
+                            <td>${i + 1}</td>
+                            <td><b>${s.nama}</b><br><small class="text-muted">${s.nik}</small></td>
+                            <td>${s.jenis_surat.toUpperCase()}</td>
+                            <td>${formatTanggalIndo(s.tanggal)}</td>
+                            <td class="text-center">${badge}</td>
+                            <td class="text-center">${buttons}</td>
+                        </tr>`;
+                    }).join('');
+                });
+        }
+
+        function loadStatistik() {
+            fetchAuth(API_BASE + '/api/stats').then(r => r.json()).then(d => {
+                $('#statWarga').text(d.totalWarga); $('#statSurat').text(d.suratBulanIni); $('#statPending').text(d.pending);
+                if (d.chartData) renderChart(d.chartData);
+            });
+        }
+
+        function renderChart(dataLog) {
+            const ctx = document.getElementById('suratChart');
+            if (window.myChartInstance) window.myChartInstance.destroy();
+            window.myChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: dataLog.map(d => d.bulan), datasets: [{ label: 'Total Surat', data: dataLog.map(d => d.jumlah), borderColor: '#0066ff', tension: 0.4 }] }
+            });
+        }
+
+        window.switchTab = (tab) => {
+            currentTab = tab;
+            const btnActive = document.getElementById('btnTabActive');
+            const btnDeleted = document.getElementById('btnTabDeleted');
+            if (tab === 'active') {
+                btnActive.classList.add('active', 'btn-primary'); btnActive.classList.remove('btn-light', 'border');
+                btnDeleted.classList.remove('active', 'btn-primary'); btnDeleted.classList.add('btn-light', 'border');
+            } else {
+                btnDeleted.classList.add('active', 'btn-primary'); btnDeleted.classList.remove('btn-light', 'border');
+                btnActive.classList.remove('active', 'btn-primary'); btnActive.classList.add('btn-light', 'border');
+            }
+            loadData();
+        };
+
+        window.ubahStatus = (id, status) => {
+            if (confirm("Ubah status surat?")) {
+                fetchAuth(`${API_BASE}/api/surat/${id}`, {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })
+                }).then(() => { loadData(); loadStatistik(); });
+            }
+        };
+
+        window.moveToTrash = (id) => { if (confirm("Hapus ke sampah?")) fetchAuth(`${API_BASE}/api/surat/${id}`, { method: 'DELETE' }).then(loadData); };
+        window.restoreSurat = (id) => { fetchAuth(`${API_BASE}/api/surat/${id}/restore`, { method: 'POST' }).then(loadData); };
+        window.deletePermanent = (id) => { if (confirm("Hapus Permanen?")) fetchAuth(`${API_BASE}/api/surat/${id}?permanent=true`, { method: 'DELETE' }).then(loadData); };
+
+        window.viewDetail = (id) => {
+            const data = window._tableData.find(x => x.id === id);
+            if (!data) return;
+            idSuratSedangDibuka = id;
+            $('#c_nama').text(data.nama || '-');
+            $('#c_nik').text(data.nik || '-');
+            const tglLahir = data.tanggal_lahir ? formatTanggalIndo(data.tanggal_lahir) : '-';
+            $('#c_ttl').text(`${data.tempat_lahir || '-'}/ ${tglLahir}`);
+            $('#c_jk').text(data.jenis_kelamin || '-');
+            $('#c_agama').text(data.agama || '-');
+            $('#c_kerja').text(data.pekerjaan || '-');
+            $('#c_status').text(data.status_perkawinan || '-');
+            $('#c_jenis').text((data.jenis_surat || '-').toUpperCase());
+            $('#c_tujuan').text(data.tujuan || '-');
+            $('#c_alamat').text(data.alamat || '-');
+            document.getElementById('customOverlay').style.display = 'flex';
+        };
+
+        window.cetakSuratSaatIni = function () {
+            if (!idSuratSedangDibuka) { alert("ID Surat tidak ditemukan."); return; }
+            const data = window._tableData.find(x => x.id === idSuratSedangDibuka);
+            if (data) cetakSuratFinal(data);
+        };
+
+        function cetakSuratFinal(data) {
+            const romawi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+            const tglRaw = new Date(data.tanggal);
+            const blnRomawi = romawi[tglRaw.getMonth()] || 'I';
+            const tglStr = tglRaw.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const tglLahirRaw = data.tanggal_lahir ? new Date(data.tanggal_lahir) : null;
+            const tglLahirStr = tglLahirRaw && !isNaN(tglLahirRaw) ? tglLahirRaw.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+            const nomorFull = `Nomor: ${data.jenis_surat === 'skd' ? '470/PEM-SM' : '412/EKN/SM'}/${blnRomawi}/${tglRaw.getFullYear()}/${String(data.nomor_urut || '0').padStart(3, '0')}`;
+            const logoUrl = window.location.origin + "/Kuansing.png";
+
+            const htmlContent = `
+            <div style="font-family: 'Times New Roman', serif; padding: 1cm; color: black; line-height: 1.5;">
+                <div style="text-align: center; border-bottom: 3px double black; padding-bottom: 10px; margin-bottom: 20px; position: relative;">
+                    <img src="${logoUrl}" style="width: 75px; position: absolute; left: 10px; top: 0;">
+                    <h3 style="margin:0; font-size: 14pt;">PEMERINTAH KABUPATEN KUANTAN SINGINGI</h3>
+                    <h3 style="margin:0; font-size: 14pt;">KECAMATAN SINGINGI HILIR</h3>
+                    <h2 style="margin:0; font-size: 16pt; font-weight: bold;">DESA SUKAMAJU</h2>
+                    <p style="margin:0; font-size: 10pt; font-style: italic;">Alamat: Jl. Poros Desa Sukamaju No. 05 Kode Pos 29563</p>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <span style="font-weight: bold; text-decoration: underline; font-size: 14pt; text-transform: uppercase;">${data.jenis_surat === 'skd' ? 'SURAT KETERANGAN DOMISILI' : 'SURAT KETERANGAN USAHA'}</span><br><span style="font-size: 12pt;">${nomorFull}</span>
+                </div>
+                <p style="margin-top: 30px; text-align: justify;">Yang bertanda tangan di bawah ini Kepala Desa Sukamaju, Kecamatan Singingi Hilir, Kabupaten Kuantan Singingi, menerangkan dengan sebenarnya bahwa:</p>
+                <table style="width: 100%; margin-left: 20px; margin-bottom: 20px;">
+                    <tr><td style="width: 180px;">Nama Lengkap</td><td>: <strong>${(data.nama || '').toUpperCase()}</strong></td></tr>
+                    <tr><td>NIK</td><td>: ${data.nik || '-'}</td></tr>
+                    <tr><td>Tempat/Tgl Lahir</td><td>: ${data.tempat_lahir || '-'}, ${tglLahirStr}</td></tr>
+                    <tr><td>Jenis Kelamin</td><td>: ${data.jenis_kelamin || '-'}</td></tr>
+                    <tr><td>Agama</td><td>: ${data.agama || '-'}</td></tr>
+                    <tr><td>Pekerjaan</td><td>: ${data.pekerjaan || '-'}</td></tr>
+                    <tr><td>Status Perkawinan</td><td>: ${data.status_perkawinan || '-'}</td></tr>
+                    <tr><td style="vertical-align: top;">Alamat</td><td style="vertical-align: top;">: ${data.alamat || '-'}</td></tr>
+                </table>
+                <p style="text-align: justify;">${data.jenis_surat === 'skd' ? 'Benar yang bersangkutan adalah penduduk Desa Sukamaju yang berdomisili di alamat tersebut di atas.' : `Benar yang bersangkutan adalah penduduk Desa Sukamaju yang memiliki usaha <strong>${data.nama_usaha || '-'}</strong>.`}</p>
+                <p style="text-align: justify;">Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.</p>
+                <div style="float: right; width: 250px; text-align: center; margin-top: 50px;">
+                    <p>Sukamaju, ${tglStr}</p>
+                    <p style="font-weight: bold; margin-bottom: 80px;">KEPALA DESA SUKAMAJU</p>
+                    <p style="font-weight: bold; text-decoration: underline;">AGUS SUPRIYANTO, A.Md.</p>
+                </div>
+            </div>`;
+
+            const win = window.open('', '', 'height=700,width=900');
+            win.document.write('<html><head><title>Cetak Surat</title></head><body style="margin:0;">' + htmlContent + '</body></html>');
+            win.document.close();
+            setTimeout(() => { win.print(); win.close(); }, 800);
+        }
+
+        window.bukaEditModal = (id) => {
+            const data = window._tableData.find(x => x.id === id);
+            if (!data) return;
+            idSuratSedangDiedit = id;
+            $('#edit_id').val(data.id);
+            $('#edit_nomor_urut').val(data.nomor_urut);
+            $('#edit_nama').val(data.nama);
+            $('#edit_nik').val(data.nik);
+            $('#edit_jenis').val(data.jenis_surat);
+            $('#edit_usaha').val(data.nama_usaha);
+            $('#edit_tanggal').val(data.tanggal.split('T')[0]);
+            $('#edit_alamat').val(data.alamat);
+            document.getElementById('editOverlay').style.display = 'flex';
+        };
+
+        window.simpanPerubahan = () => {
+            const data = {
+                nomor_urut: $('#edit_nomor_urut').val(),
+                nama: $('#edit_nama').val(),
+                nik: $('#edit_nik').val(),
+                jenis_surat: $('#edit_jenis').val(),
+                nama_usaha: $('#edit_usaha').val(),
+                tanggal: $('#edit_tanggal').val(),
+                alamat: $('#edit_alamat').val()
+            };
+            fetchAuth(`${API_BASE}/api/surat/${idSuratSedangDiedit}/edit`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+            }).then(() => {
+                document.getElementById('editOverlay').style.display = 'none';
+                loadData();
+            });
+        };
+
+        // ==========================================
+        // FITUR KEAMANAN: IDLE TIMEOUT (AUTO-LOGOUT)
+        // ==========================================
+        
+        // Atur batas waktu menganggur (dalam milidetik)
+        // Contoh: 15 Menit = 15 * 60 * 1000 = 900000 ms. 
+        // Untuk testing, ubah sementara jadi 10000 (10 detik)
+        const IDLE_TIMEOUT = 15 * 60 * 1000; 
+        let idleTimer;
+
+        // Fungsi untuk mereset timer setiap kali ada pergerakan
+        function resetIdleTimer() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(autoLogout, IDLE_TIMEOUT);
+        }
+
+        // Fungsi yang mengeksekusi pengeluaran paksa
+        function autoLogout() {
+            sessionStorage.clear(); // Hapus kunci login
+            alert("Sesi Anda telah berakhir karena tidak ada aktivitas selama 15 menit. Demi keamanan, silakan login kembali.");
+            window.location.href = 'index.html'; // Lempar ke halaman depan
+        }
+
+        // Daftar sensor untuk mendeteksi keberadaan staf di depan layar
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+        window.addEventListener('scroll', resetIdleTimer);
+
+        // Jalankan timer pertama kali saat halaman dibuka
+        resetIdleTimer();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Riwayat Aktivitas - Portal Desa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        body:not(.dark-mode) .content-wrapper {
+            background-color: #f4f6f9;
+            min-height: 100vh;
+        }
+
+        body:not(.dark-mode) .main-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        body:not(.dark-mode) .card {
+            background: #ffffff;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .table thead th {
+            border-top: none;
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            color: #8898aa;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            vertical-align: middle;
+            border-top: 1px solid #f4f6f9;
+            font-size: 0.95rem;
+        }
+
+        .badge-action {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .log-time {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .log-date {
+            font-size: 0.8rem;
+            color: #8898aa;
+            display: block;
+            margin-top: 2px;
+        }
+
+        
+    </style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block"><span class="nav-link font-weight-bold text-dark">Log
+                        Sistem</span></li>
+            </ul>
+            <ul class="navbar-nav ml-auto align-items-center">
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff"
+                            class="user-image img-circle elevation-1" alt="User" id="navUserImg">
+                        <span class="d-none d-md-inline font-weight-bold" id="navUserName">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="user-header bg-primary">
+                            <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff"
+                                class="user-image img-circle elevation-2" alt="User" id="dropdownUserImg">
+                            <p><span id="dropdownUserName"
+                                    style="font-size: 1.2rem; font-weight: bold;">Admin</span><small>Petugas Desa
+                                    Sukamaju</small></p>
+                        </li>
+                        <li class="user-footer">
+                            <a href="#" onclick="sessionStorage.clear(); window.location.href='index.html'"
+                                class="btn btn-danger btn-block"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link text-center"><span class="brand-text font-weight-bold">PORTAL DESA</span></a>
+            <div class="sidebar">
+                <nav class="mt-3">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+
+                        <li class="nav-item">
+                            <a href="admin.html" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Beranda</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="admin_surat.html" class="nav-link">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Buat Surat</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="warga.html" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Database Warga</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="riwayat.html" class="nav-link active">
+                                <i class="nav-icon fas fa-history"></i>
+                                <p>Riwayat Aktivitas</p>
+                            </a>
+                        </li>
+
+                        
+
+                        <li class="nav-header mt-2">PENGATURAN</li>
+                        <li class="nav-item">
+                            <a href="admin_akun.html" class="nav-link">
+                                <i class="nav-icon fas fa-user-cog"></i>
+                                <p>Manajemen Akun</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        </ul>
+        </nav>
+    </div>
+    </aside>
+
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container-fluid pt-4">
+                <div class="card">
+                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                        <h3 class="card-title font-weight-bold"><i class="fas fa-history text-primary mr-2"></i>
+                            Aktivitas Terakhir</h3>
+                        <button class="btn btn-light border btn-sm" onclick="loadLogs()" title="Refresh Data">
+                            <i class="fas fa-sync-alt text-muted"></i>
+                        </button>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Waktu</th>
+                                    <th>Aksi</th>
+                                    <th>Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                <tr>
+                                    <td colspan="4" class="text-center py-5"><i
+                                            class="fas fa-spinner fa-spin text-primary"></i> Memuat riwayat...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer bg-white border-0 text-center">
+                        <small class="text-muted">Menampilkan 100 aktivitas sistem terbaru.</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="main-footer text-sm border-top-0">
+        <strong>&copy; 2026 Pemerintah Desa Sukamaju</strong>
+    </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    <script>
+        const API_BASE = '';
+        let isOnline = navigator.onLine;
+
+        async function fetchAuth(url, options = {}) {
+            const token = sessionStorage.getItem('authToken');
+            if (!options.headers) options.headers = {};
+            if (token) options.headers['Authorization'] = `Bearer ${token}`;
+            return fetch(url, options);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('authToken')) { window.location.href = 'index.html'; return; }
+
+            // Profil
+            const staffName = sessionStorage.getItem('staffName') || 'Admin';
+            document.getElementById('navUserName').innerText = staffName;
+            document.getElementById('dropdownUserName').innerText = staffName;
+
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=007bff&color=fff&bold=true`;
+            document.getElementById('navUserImg').src = avatarUrl;
+            document.getElementById('dropdownUserImg').src = avatarUrl;
+
+            // Theme
+            if (localStorage.getItem('theme') === 'dark') { toggleDarkMode(); }
+
+            loadLogs();
+            // Auto refresh
+            setInterval(() => { if (isOnline) loadLogs(true); }, 5000);
+        });
+
+        async function loadLogs(isAuto = false) {
+            try {
+                const response = await fetchAuth(`${API_BASE}/api/logs`);
+                if (!response.ok) throw new Error("Gagal");
+                const logs = await response.json();
+                renderLogs(logs);
+            } catch (error) {
+                if (!isAuto) document.getElementById('logTableBody').innerHTML = `<tr><td colspan="4" class="text-center text-danger">Gagal memuat log.</td></tr>`;
+            }
+        }
+
+        function renderLogs(logs) {
+            const tbody = document.getElementById('logTableBody');
+            if (!logs || logs.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-5">Belum ada aktivitas.</td></tr>`; return; }
+
+            tbody.innerHTML = logs.map((log, index) => {
+                let badgeClass = 'badge-secondary';
+                const act = (log.action || '').toUpperCase();
+
+                if (act.includes('LOGIN')) badgeClass = 'badge-info';
+                else if (act.includes('HAPUS') || act.includes('DELETE')) badgeClass = 'badge-danger';
+                else if (act.includes('SIMPAN') || act.includes('BUAT') || act.includes('TAMBAH')) badgeClass = 'badge-success';
+                else if (act.includes('EDIT') || act.includes('UPDATE')) badgeClass = 'badge-warning text-white';
+
+                const dateObj = new Date(log.timestamp);
+                const timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+                return `<tr>
+                    <td>${index + 1}</td>
+                    <td>
+                        <div class="log-time"><i class="far fa-clock mr-1 text-muted"></i> ${timeStr}</div>
+                        <span class="log-date">${dateStr}</span>
+                    </td>
+                    <td><span class="badge ${badgeClass} badge-action shadow-sm">${log.action}</span></td>
+                    <td>${log.description}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Dark Mode Logic
+        
+
+        function logout() { if (confirm('Keluar sistem?')) { sessionStorage.removeItem('authToken'); window.location.href = 'index.html'; } }
+
+        // ==========================================
+        // FITUR KEAMANAN: IDLE TIMEOUT (AUTO-LOGOUT)
+        // ==========================================
+        
+        // Atur batas waktu menganggur (dalam milidetik)
+        // Contoh: 15 Menit = 15 * 60 * 1000 = 900000 ms. 
+        // Untuk testing, ubah sementara jadi 10000 (10 detik)
+        const IDLE_TIMEOUT = 15 * 60 * 1000; 
+        let idleTimer;
+
+        // Fungsi untuk mereset timer setiap kali ada pergerakan
+        function resetIdleTimer() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(autoLogout, IDLE_TIMEOUT);
+        }
+
+        // Fungsi yang mengeksekusi pengeluaran paksa
+        function autoLogout() {
+            sessionStorage.clear(); // Hapus kunci login
+            alert("Sesi Anda telah berakhir karena tidak ada aktivitas selama 15 menit. Demi keamanan, silakan login kembali.");
+            window.location.href = 'index.html'; // Lempar ke halaman depan
+        }
+
+        // Daftar sensor untuk mendeteksi keberadaan staf di depan layar
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+        window.addEventListener('scroll', resetIdleTimer);
+
+        // Jalankan timer pertama kali saat halaman dibuka
+        resetIdleTimer();
+    </script>
+</body>
+
+</html>

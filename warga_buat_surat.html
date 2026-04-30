@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengajuan Surat Online - Desa Sukamaju</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; padding-top: 50px; }
+        .form-card {
+            background: white; border: none; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 40px;
+        }
+        .form-control { border-radius: 10px; background: #f8f9fa; border: 1px solid #ddd; height: 45px; }
+        .btn-submit { border-radius: 10px; padding: 12px; font-weight: 600; background: #0066ff; border: none; }
+        .btn-submit:hover { background: #0052cc; }
+        .header-logo { width: 60px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="form-card">
+                <div class="text-center mb-4">
+                    <img src="Kuansing.png" class="header-logo" alt="Logo">
+                    <h3 class="font-weight-bold">Formulir Pengajuan Surat</h3>
+                    <p class="text-muted">Silakan lengkapi data permohonan Anda di bawah ini.</p>
+                </div>
+
+                <form id="formSurat">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="small font-weight-bold">Nama Lengkap</label>
+                            <input type="text" id="dispNama" class="form-control" readonly>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="small font-weight-bold">NIK</label>
+                            <input type="text" id="dispNik" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="small font-weight-bold">Jenis Surat</label>
+                        <select id="jenis_surat" class="form-control" required onchange="toggleUsaha()">
+                            <option value="">-- Pilih Jenis Surat --</option>
+                            <option value="sku">Surat Keterangan Usaha (SKU)</option>
+                            <option value="skd">Surat Keterangan Domisili (SKD)</option>
+                        </select>
+                    </div>
+
+                    <div id="groupUsaha" class="form-group" style="display:none;">
+                        <label class="small font-weight-bold">Nama Usaha</label>
+                        <input type="text" id="nama_usaha" class="form-control" placeholder="Contoh: Toko Sembako Berkah">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="small font-weight-bold">Keperluan / Tujuan</label>
+                        <textarea id="tujuan" class="form-control" style="height: 100px;" placeholder="Contoh: Syarat pengajuan kredit KUR Mandiri" required></textarea>
+                    </div>
+
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <a href="index.html" class="btn btn-light">Batal</a>
+                        <button type="submit" class="btn btn-primary px-5 btn-submit">Kirim Permohonan <i class="fas fa-paper-plane ml-2"></i></button>
+                    </div>
+                </form>
+            </div>
+            <p class="text-center mt-4 text-muted small">&copy; 2026 Pemerintah Desa Sukamaju</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // IP Dinamis
+    const API_BASE = '';
+    // 1. Ambil data dari localStorage (BUKAN sessionStorage lagi)
+    const sessionNik = localStorage.getItem('nik_warga');
+    const sessionNama = localStorage.getItem('nama_warga');
+
+    // Jika data kosong, tendang ke index
+    if (!sessionNik) {
+        alert("Sesi habis atau belum login. Silakan validasi NIK kembali.");
+        window.location.href = 'index.html';
+    } else {
+        document.getElementById('dispNik').value = sessionNik;
+        document.getElementById('dispNama').value = sessionNama;
+    }
+
+    function toggleUsaha() {
+        const jenis = document.getElementById('jenis_surat').value;
+        const groupUsaha = document.getElementById('groupUsaha');
+        groupUsaha.style.display = (jenis === 'sku') ? 'block' : 'none';
+    }
+
+    document.getElementById('formSurat').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const dataSurat = {
+            nik: sessionNik,
+            nama: sessionNama,
+            jenis_surat: document.getElementById('jenis_surat').value,
+            nama_usaha: document.getElementById('nama_usaha').value,
+            tujuan: document.getElementById('tujuan').value,
+            tanggal: new Date().toISOString().split('T')[0] 
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/api/warga/ajukan-surat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataSurat)
+            });
+
+            if (res.ok) {
+                alert("Berhasil! Permohonan Anda telah dikirim.");
+                window.location.href = 'index.html'; // Kembali ke menu utama
+            } else {
+                const errJson = await res.json();
+                alert("Gagal: " + (errJson.error || "Terjadi kesalahan"));
+            }
+        } catch (err) {
+            alert("Koneksi gagal.");
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Resmi Desa Sukamaju</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 102, 255, 0.85), rgba(0, 80, 200, 0.9)), url('https://images.unsplash.com/photo-1500382017468-9049fee74a62?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0 140px 0;
+            text-align: center;
+            border-radius: 0 0 50px 50px;
+            position: relative;
+        }
+
+        .service-card {
+            border: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            background: white;
+            padding: 40px 20px;
+            height: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 102, 255, 0.15);
+        }
+
+        .service-card i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #0066ff;
+        }
+
+        .btn-main {
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .modal-content {
+            border-radius: 25px;
+            border: none;
+        }
+
+        #loginAdminBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.6;
+            z-index: 1000;
+        }
+
+        #loginAdminBtn:hover {
+            opacity: 1;
+        }
+
+        #userWelcome {
+            display: none;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hero-section">
+        <div class="container">
+            <i class="fas fa-landmark mb-3" style="font-size: 3rem;"></i>
+            <h1 class="display-4 font-weight-bold">Desa Sukamaju</h1>
+            <p class="lead">Kecamatan Singingi Hilir, Kabupaten Kuantan Singingi</p>
+
+            <div id="welcomeArea" style="display: none;">
+                <div class="mt-3">
+                    <span class="badge badge-light p-2 px-3 mb-2" style="font-size: 1rem; color: #0066ff;">
+                        <i class="fas fa-user-check mr-2"></i> Halo, <span id="namaWarga">Warga</span>
+                    </span>
+                    <br>
+                    <button onclick="gantiAkun()" class="btn btn-outline-light btn-sm mt-2"
+                        style="border-radius: 20px;">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Ganti NIK / Keluar
+                    </button>
+                </div>
+            </div>
+
+            <div id="defaultArea" class="mt-4">
+                <a href="#layanan" class="btn btn-light btn-main text-primary">Lihat Layanan</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="layanan" style="margin-top: -80px; margin-bottom: 80px;">
+        <div class="row justify-content-center">
+            <div class="col-md-5 mb-4">
+                <div class="service-card text-center" onclick="aksesLayanan('cek')">
+                    <i class="fas fa-search-location"></i>
+                    <h4 class="font-weight-bold">Cek Status Surat</h4>
+                    <p class="text-muted">Lacak proses permohonan surat Anda secara realtime.</p>
+                </div>
+            </div>
+            <div class="col-md-5 mb-4">
+                <div class="service-card text-center" onclick="aksesLayanan('buat')">
+                    <i class="fas fa-file-signature"></i>
+                    <h4 class="font-weight-bold">Buat Surat Online</h4>
+                    <p class="text-muted">Ajukan permohonan SKU atau SKD mandiri dari rumah.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="nikModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-body p-5 text-center">
+                    <button type="button" class="close" data-dismiss="modal"
+                        style="position: absolute; right: 20px; top: 15px;">&times;</button>
+                    <h4 class="font-weight-bold mb-3">Validasi Data Warga</h4>
+                    <p class="text-muted mb-4">Masukkan NIK Anda</p>
+                    <input type="number" id="inputNik" class="form-control form-control-lg text-center mb-4"
+                        placeholder="Contoh: 14020..." style="border-radius: 15px; background: #f8f9fa;">
+                    <button class="btn btn-primary btn-lg btn-block btn-main" onclick="validasiNik()">
+                        Masuk & Simpan <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="login.html" id="loginAdminBtn" class="btn btn-dark btn-sm shadow">
+        <i class="fas fa-lock mr-1"></i> Panel Petugas
+    </a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let modeTujuan = '';
+        const API_BASE = '';
+        // ==========================================
+        // FITUR KEAMANAN: IDLE TIMEOUT (WARGA)
+        // ==========================================
+        const IDLE_TIMEOUT = 15 * 60 * 1000; // 15 Menit (Ganti jadi 10000 untuk tes 10 detik)
+        let idleTimer;
+
+        // 1. CEK OTOMATIS SAAT WEB DIBUKA
+        document.addEventListener('DOMContentLoaded', () => {
+            const lastActivity = localStorage.getItem('warga_last_activity');
+            const now = Date.now();
+
+            // Cek apakah waktu saat ini sudah melampaui batas 15 menit dari aktivitas terakhir
+            if (lastActivity && (now - parseInt(lastActivity) > IDLE_TIMEOUT)) {
+                // Jika ditinggal lama (misal 1 hari), bersihkan datanya!
+                localStorage.removeItem('nik_warga');
+                localStorage.removeItem('nama_warga');
+                localStorage.removeItem('warga_last_activity');
+            }
+
+            cekSesiWarga();
+            resetIdleTimer(); // Mulai jalankan sensor
+        });
+
+        function resetIdleTimer() {
+            // Setiap ada gerakan, perbarui catatan waktu terakhir aktif
+            if (localStorage.getItem('nik_warga')) {
+                localStorage.setItem('warga_last_activity', Date.now().toString());
+            }
+            
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(autoLogoutWarga, IDLE_TIMEOUT);
+        }
+
+        function autoLogoutWarga() {
+            const nik = localStorage.getItem('nik_warga');
+            if (nik) { // Hanya munculkan pesan jika posisinya sedang "Login"
+                localStorage.removeItem('nik_warga');
+                localStorage.removeItem('nama_warga');
+                localStorage.removeItem('warga_last_activity');
+                alert("Sesi Anda telah berakhir karena tidak ada aktivitas selama 15 menit. Silakan masukkan NIK kembali.");
+                location.reload(); // Refresh halaman agar tampilan kembali ke awal
+            }
+        }
+
+        // Pasang sensor gerakan
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+        window.addEventListener('scroll', resetIdleTimer);
+
+
+        // ==========================================
+        // LOGIKA TAMPILAN WIDGET SAPAAN
+        // ==========================================
+        function cekSesiWarga() {
+            const nik = localStorage.getItem('nik_warga');
+            const nama = localStorage.getItem('nama_warga');
+
+            if (nik && nama) {
+                document.getElementById('welcomeArea').style.display = 'block';
+                document.getElementById('defaultArea').style.display = 'none';
+                document.getElementById('namaWarga').innerText = nama;
+            } else {
+                document.getElementById('welcomeArea').style.display = 'none';
+                document.getElementById('defaultArea').style.display = 'block';
+            }
+        }
+
+        // 2. LOGIKA KLIK LAYANAN (PINTAR)
+        function aksesLayanan(mode) {
+            modeTujuan = mode;
+            const nik = localStorage.getItem('nik_warga');
+
+            if (nik) {
+                // JIKA SUDAH ADA NIK -> LANGSUNG MASUK (SKIP MODAL)
+                pindahHalaman(mode);
+            } else {
+                // JIKA BELUM ADA -> BUKA MODAL
+                document.getElementById('inputNik').value = '';
+                $('#nikModal').modal('show');
+            }
+        }
+
+        // 3. VALIDASI KE SERVER
+        async function validasiNik() {
+            const nik = document.getElementById('inputNik').value;
+            if (nik.length < 16) { alert("NIK harus 16 digit!"); return; }
+
+            const btn = document.querySelector('.btn-main');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/cek-warga/${nik}`);
+                const res = await response.json();
+
+                if (res.valid) {
+                    // SIMPAN KE LOCALSTORAGE (MEMORI HP/LAPTOP)
+                    localStorage.setItem('nik_warga', res.data.nik);
+                    localStorage.setItem('nama_warga', res.data.nama);
+                    localStorage.setItem('warga_last_activity', Date.now().toString());
+
+                    // Tutup modal & pindah
+                    $('#nikModal').modal('hide');
+                    pindahHalaman(modeTujuan);
+                } else {
+                    alert("NIK tidak ditemukan. Hubungi admin desa.");
+                }
+            } catch (err) {
+                alert("Gagal koneksi ke server.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // 4. HELPER PINDAH HALAMAN
+        function pindahHalaman(mode) {
+            if (mode === 'cek') window.location.href = 'warga_status.html';
+            else window.location.href = 'warga_buat_surat.html';
+        }
+
+        // 5. GANTI AKUN / LOGOUT MANUAL
+        function gantiAkun() {
+            if (confirm("Hapus data NIK dari perangkat ini?")) {
+                localStorage.removeItem('nik_warga');
+                localStorage.removeItem('nama_warga');
+                localStorage.removeItem('warga_last_activity');
+                cekSesiWarga(); // Refresh tampilan
+                alert("Data dibersihkan. Silakan input NIK baru.");
+            }
+        }
+    </script>
+</body>
+
+</html>

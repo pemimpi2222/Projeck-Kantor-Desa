@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buat Surat - Portal Desa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <style>
+        /* GLOBAL STYLE */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .content-wrapper {
+            background-color: #f4f6f9 !important;
+            min-height: 100vh;
+        }
+
+        /* Navbar & Card */
+        .main-header {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        .card {
+            background: #ffffff !important;
+            border: none;
+            border-radius: 16px !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05) !important;
+            margin-bottom: 20px;
+        }
+
+        /* Form & Inputs */
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 10px 15px;
+            height: auto;
+        }
+
+        .form-control:focus {
+            border-color: #0066ff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+
+        /* Buttons & Menu */
+        .btn {
+            border-radius: 10px;
+            font-weight: 500;
+            box-shadow: none !important;
+        }
+
+        .btn-primary {
+            background-color: #0066ff;
+            border-color: #0066ff;
+        }
+
+        .menu-card {
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: #0066ff;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.15) !important;
+        }
+
+        .nav-link {
+            outline: none !important;
+        }
+    </style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block"><span class="nav-link font-weight-bold text-dark">Layanan
+                        Surat</span></li>
+            </ul>
+            <ul class="navbar-nav ml-auto align-items-center">
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <img src="" id="navUserImg" class="user-image img-circle elevation-1" alt="User Image">
+                        <span class="d-none d-md-inline font-weight-bold" id="navUserName">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="user-header bg-primary">
+                            <img src="" id="dropdownUserImg" class="img-circle elevation-2" alt="User Image">
+                            <p><span id="dropdownUserName"
+                                    style="font-size: 1.2rem; font-weight: bold;">Admin</span><small>Petugas Desa
+                                    Sukamaju</small></p>
+                        </li>
+                        <li class="user-footer">
+                            <a href="#" onclick="logout()" class="btn btn-danger btn-flat float-right">Keluar</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link text-center"><span class="brand-text font-weight-bold">PORTAL DESA</span></a>
+            <div class="sidebar">
+                <nav class="mt-3">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+
+                        <li class="nav-item">
+                            <a href="admin.html" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Beranda</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="admin_surat.html" class="nav-link active">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Buat Surat</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="warga.html" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Database Warga</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="riwayat.html" class="nav-link">
+                                <i class="nav-icon fas fa-history"></i>
+                                <p>Riwayat Aktivitas</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-header mt-2">PENGATURAN</li>
+                        <li class="nav-item">
+                            <a href="admin_akun.html" class="nav-link">
+                                <i class="nav-icon fas fa-user-cog"></i>
+                                <p>Manajemen Akun</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        </ul>
+        </nav>
+    </div>
+    </aside>
+
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container-fluid pt-4">
+
+                <div id="menuPilihan" class="row justify-content-center">
+                    <div class="col-12 text-center mb-4">
+                        <h3 class="font-weight-bold text-dark">Pilih Jenis Surat</h3>
+                        <p class="text-muted">Pilih format surat yang ingin diterbitkan</p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 mb-3">
+                        <div class="card menu-card h-100" onclick="pilihSurat('sku')">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                    style="width: 70px; height: 70px;"><i class="fas fa-store text-primary"
+                                        style="font-size: 2rem;"></i></div>
+                                <h5 class="font-weight-bold">Ket. Usaha (SKU)</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 mb-3">
+                        <div class="card menu-card h-100" onclick="pilihSurat('skd')">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                    style="width: 70px; height: 70px;"><i class="fas fa-map-marker-alt text-success"
+                                        style="font-size: 2rem;"></i></div>
+                                <h5 class="font-weight-bold">Ket. Domisili (SKD)</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 mb-3">
+                        <div class="card menu-card h-100" onclick="pilihSurat('kustom')">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                    style="width: 70px; height: 70px;"><i class="fas fa-file-alt text-warning"
+                                        style="font-size: 2rem;"></i></div>
+                                <h5 class="font-weight-bold">Surat Bebas</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="formArea" class="row" style="display: none;">
+                    <div class="col-lg-5 col-md-12">
+                        <div class="card">
+                            <div
+                                class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="font-weight-bold m-0"><i class="fas fa-pen mr-2 text-primary"></i> Isi
+                                    Data Surat</h5>
+                                <button class="btn btn-sm btn-light border" onclick="kembaliKeMenu()"><i
+                                        class="fas fa-times"></i></button>
+                            </div>
+                            <div class="card-body px-4 pb-4">
+                                <form id="suratForm">
+                                    <input type="hidden" id="jenis_surat" value="">
+
+                                    <div id="blokKustom"
+                                        style="display: none; background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ffeeba;">
+                                        <h6 class="font-weight-bold text-warning mb-3"><i class="fas fa-cog mr-1"></i>
+                                            Pengaturan Surat Bebas</h6>
+                                        <div class="form-group">
+                                            <label class="small text-muted mb-1">Judul Surat</label>
+                                            <input class="form-control" id="kustom_judul"
+                                                placeholder="Contoh: SURAT PENGANTAR NIKAH">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small text-muted mb-1">Kode Surat (Awalan Nomor)</label>
+                                            <input class="form-control" id="kustom_kode"
+                                                placeholder="Contoh: 140/PEM-SM">
+                                            <small class="text-muted">Akan menjadi: Nomor:
+                                                [Kode]/[Bulan]/[Tahun]/[No.Urut]</small>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <label class="small text-muted mb-1">Isi Paragraf Surat</label>
+                                            <textarea class="form-control" id="kustom_isi" rows="4"
+                                                placeholder="Ketik kalimat yang menerangkan maksud surat di sini..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="small text-muted mb-1">Cari Data Warga (NIK)</label>
+                                        <div class="input-group">
+                                            <input class="form-control" id="nik" type="text"
+                                                placeholder="Masukkan NIK...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button" onclick="cariWarga()"><i
+                                                        class="fas fa-search"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group"><label class="small text-muted mb-1">Nama
+                                            Lengkap</label><input class="form-control" id="nama"
+                                            placeholder="Sesuai KTP" required></div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="small text-muted mb-1">Jenis Kelamin</label>
+                                                <select class="form-control" id="jenis_kelamin">
+                                                    <option value="">- Pilih -</option>
+                                                    <option value="Laki-laki">Laki-laki</option>
+                                                    <option value="Perempuan">Perempuan</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="small text-muted mb-1">Agama</label>
+                                                <select class="form-control" id="agama">
+                                                    <option value="">- Pilih Agama -</option>
+                                                    <option value="Islam">Islam</option>
+                                                    <option value="Kristen">Kristen</option>
+                                                    <option value="Katolik">Katolik</option>
+                                                    <option value="Hindu">Hindu</option>
+                                                    <option value="Buddha">Buddha</option>
+                                                    <option value="Konghucu">Konghucu</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group"><label class="small text-muted mb-1">Tempat
+                                                    Lahir</label><input class="form-control" id="tempat_lahir">
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group"><label class="small text-muted mb-1">Tgl
+                                                    Lahir</label><input class="form-control" type="date" id="tgl_lahir">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group"><label class="small text-muted mb-1">Pekerjaan</label><input
+                                            class="form-control" id="pekerjaan" value="Wiraswasta"></div>
+                                    <input type="hidden" id="status_perkawinan">
+                                    <div class="form-group"><label class="small text-muted mb-1">Alamat</label><textarea
+                                            class="form-control" id="alamat" rows="2"></textarea></div>
+
+                                    <div id="kolomUsaha">
+                                        <hr class="my-4">
+                                        <div class="form-group"><label class="small text-muted mb-1">Nama
+                                                Usaha</label><input class="form-control" id="nama_usaha"
+                                                placeholder="Contoh: Toko Sembako"></div>
+                                    </div>
+
+                                    <hr class="my-4">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group"><label class="small text-muted mb-1">Tanggal
+                                                    Surat</label><input type="date" class="form-control" id="tanggal">
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group"><label class="small text-muted mb-1">Penanda
+                                                    Tangan</label><select class="form-control" id="penandatangan">
+                                                    <option value="kades">Kepala Desa</option>
+                                                    <option value="sekdes">Sekretaris Desa</option>
+                                                </select></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer bg-white border-0 pt-0 pb-4 px-4">
+                                <button type="button" id="submitBtn"
+                                    class="btn btn-success btn-block py-2 mb-2 font-weight-bold"><i
+                                        class="fas fa-save mr-2"></i> SIMPAN SURAT</button>
+                                <button type="button" id="btnCetak" onclick="cetakLangsung()"
+                                    class="btn btn-outline-primary btn-block py-2" disabled><i
+                                        class="fas fa-print mr-2"></i> Cetak Surat</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7 col-md-12">
+                        <div class="card bg-light border" style="position: sticky; top: 20px;">
+                            <div class="card-header border-0 bg-transparent pb-0">
+                                <h3 class="card-title font-weight-bold text-muted"><i class="fas fa-eye mr-1"></i>
+                                    Pratinjau Dokumen</h3>
+                            </div>
+                            <div class="card-body">
+                                <div
+                                    style="background: white; padding: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1); min-height: 600px; transform: scale(0.9); transform-origin: top center;">
+                                    <div id="kertasPreview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <footer class="main-footer text-sm border-top-0">
+        <strong>&copy; <span id="year2"></span> Pemerintah Desa Sukamaju</strong>
+    </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    <script>
+        const API_BASE = '';
+        const val = (id) => { const el = document.getElementById(id); return el ? el.value : '-'; };
+        function getRomawi(bulan) { const r = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]; return r[bulan]; }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('authToken')) { window.location.href = 'index.html'; return; }
+            document.getElementById('year2').innerText = new Date().getFullYear();
+
+            const staffName = sessionStorage.getItem('staffName') || 'Admin';
+            document.getElementById('navUserName').innerText = staffName;
+            document.getElementById('dropdownUserName').innerText = staffName;
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=0D8ABC&color=fff`;
+            document.getElementById('navUserImg').src = avatarUrl;
+            document.getElementById('dropdownUserImg').src = avatarUrl;
+
+            const tglInput = document.getElementById('tanggal');
+            if (tglInput) tglInput.valueAsDate = new Date();
+
+            const inputs = document.querySelectorAll('#suratForm input, #suratForm select, #suratForm textarea');
+            inputs.forEach(input => { input.addEventListener('input', updatePreview); input.addEventListener('change', updatePreview); });
+        });
+
+        function pilihSurat(jenis) {
+            document.getElementById('menuPilihan').style.display = 'none';
+            document.getElementById('formArea').style.display = 'flex';
+            document.getElementById('jenis_surat').value = jenis;
+            document.getElementById('suratForm').reset();
+            document.getElementById('tanggal').valueAsDate = new Date();
+
+            // Logika Tampilan Blok Form
+            const blokKustom = document.getElementById('blokKustom');
+            const kolomUsaha = document.getElementById('kolomUsaha');
+
+            if (jenis === 'kustom') {
+                blokKustom.style.display = 'block';
+                kolomUsaha.style.display = 'none';
+            } else if (jenis === 'sku') {
+                blokKustom.style.display = 'none';
+                kolomUsaha.style.display = 'block';
+            } else { // SKD
+                blokKustom.style.display = 'none';
+                kolomUsaha.style.display = 'none';
+            }
+            updatePreview();
+        }
+
+        function kembaliKeMenu() { document.getElementById('formArea').style.display = 'none'; document.getElementById('menuPilihan').style.display = 'flex'; }
+
+        async function cariWarga() {
+            const nik = document.getElementById('nik').value;
+            if (!nik) return alert("Masukkan NIK dulu!");
+            
+            const btn = document.querySelector('.input-group-append .btn');
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/cek-warga/${nik}`);
+                const resJson = await response.json();
+                
+                if (resJson.valid) {
+                    const data = resJson.data;
+                    
+                    // MENGISI SEMUA KOLOM SECARA OTOMATIS
+                    document.getElementById('nama').value = data.nama || '';
+                    if (data.tempat_lahir) document.getElementById('tempat_lahir').value = data.tempat_lahir;
+                    if (data.pekerjaan) document.getElementById('pekerjaan').value = data.pekerjaan;
+                    if (data.alamat) document.getElementById('alamat').value = data.alamat;
+                    
+                    // Mengisi select box (Dropdown)
+                    // Mengisi select box dengan sistem kebal huruf besar/kecil
+                    if (data.jenis_kelamin) {
+                        Array.from(document.getElementById('jenis_kelamin').options).forEach(opt => {
+                            if (opt.value.toLowerCase() === data.jenis_kelamin.toLowerCase()) document.getElementById('jenis_kelamin').value = opt.value;
+                        });
+                    }
+                    
+                    if (data.agama) {
+                        Array.from(document.getElementById('agama').options).forEach(opt => {
+                            if (opt.value.toLowerCase() === data.agama.toLowerCase()) document.getElementById('agama').value = opt.value;
+                        });
+                    }
+                    
+                    // Format khusus untuk Tanggal Lahir (harus berformat YYYY-MM-DD untuk input type="date")
+                    if (data.tanggal_lahir) {
+                        const d = new Date(data.tanggal_lahir);
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        document.getElementById('tgl_lahir').value = `${year}-${month}-${day}`;
+                    }
+                    
+                    updatePreview();
+                } else { 
+                    alert("Data tidak ditemukan! Silakan isi manual."); 
+                }
+            } catch (error) { 
+                console.error(error); 
+                alert("Gagal mengambil data."); 
+            } finally { 
+                btn.innerHTML = originalIcon; 
+                btn.disabled = false; 
+            }
+        }
+
+        function getSuratHTML() {
+            const tglRaw = document.getElementById('tanggal').valueAsDate || new Date();
+            const tglStr = tglRaw.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const noUrut = window.nomorSuratResmi || "XXX";
+            const blnRomawi = getRomawi(tglRaw.getMonth());
+            const tahun = tglRaw.getFullYear();
+            const jenis = document.getElementById('jenis_surat').value;
+
+            let prefix = "412/EKN/SM";
+            let judul = "SURAT KETERANGAN USAHA";
+            let isi = `<p>Menerangkan dengan sebenarnya bahwa orang tersebut di atas adalah benar-benar penduduk Desa Sukamaju yang memiliki usaha: <strong>${val('nama_usaha')}</strong>.</p><p>Demikian Surat Keterangan Usaha ini dibuat untuk dapat dipergunakan sebagai syarat administrasi / perbankan.</p>`;
+
+            if (jenis === 'skd') {
+                prefix = "470/PEM-SM";
+                judul = "SURAT KETERANGAN DOMISILI";
+                isi = `<p>Menerangkan dengan sebenarnya bahwa orang tersebut di atas adalah benar-benar warga penduduk Desa Sukamaju, Kecamatan Singingi Hilir, Kabupaten Kuantan Singingi, dan saat ini berdomisili di alamat tersebut di atas.</p><p>Demikian Surat Keterangan Domisili ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.</p>`;
+            } else if (jenis === 'kustom') {
+                prefix = val('kustom_kode') || "140/PEM-SM";
+                judul = (val('kustom_judul') || "SURAT KETERANGAN").toUpperCase();
+                // Mengubah enter menjadi tag <br> agar rapi di HTML
+                const isiBebas = (val('kustom_isi') || "Ketik isi surat di sini...").replace(/\n/g, "<br>");
+                isi = `<p>${isiBebas}</p><p>Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.</p>`;
+            }
+
+            const nomorFull = `Nomor: ${prefix}/${blnRomawi}/${tahun}/${noUrut}`;
+
+            let ttdNama = "AGUS SUPRIYANTO, A.Md.";
+            let ttdJabatan = "KEPALA DESA SUKAMAJU";
+            if (val('penandatangan') === 'sekdes') { ttdNama = "NANANG"; ttdJabatan = "An. KEPALA DESA<br>SEKRETARIS DESA"; }
+
+            return `<div style="font-family: 'Times New Roman', serif; padding: 1cm; color: black; line-height: 1.15;"><div style="position: relative; height: 120px; width: 100%; border-bottom: 3px double black; margin-bottom: 20px;"><img src="Kuansing.png" alt="Logo" style="position: absolute; top: 0; left: 20px; width: 75px; height: auto;"><div style="width: 100%; text-align: center; padding-left: 80px; box-sizing: border-box;"><h3 style="font-size: 14pt; margin:0; font-weight: 500; letter-spacing: 1px;">PEMERINTAH KABUPATEN KUANTAN SINGINGI</h3><h3 style="font-size: 14pt; margin:0; font-weight: 500;">KECAMATAN SINGINGI HILIR</h3><h2 style="font-size: 18pt; margin:0; font-weight: bold;">DESA SUKAMAJU</h2><p style="font-size: 10pt; margin:0; font-style: italic; margin-top: 2px;">Alamat: Jl. Poros Desa Sukamaju No. 05 Kode Pos 29563</p></div></div><div style="text-align: center; margin-bottom: 2px;"><span style="font-weight: bold; font-size: 14pt; border-bottom: 1.5px solid black; padding-bottom: 2px; display: inline-block;">${judul}</span></div><div style="text-align: center; font-size: 12pt; margin-bottom: 30px;">${nomorFull}</div><p style="font-size: 12pt; text-align: justify; margin-bottom: 10px;">Yang bertanda tangan di bawah ini Kepala Desa Sukamaju, Kecamatan Singingi Hilir, Kabupaten Kuantan Singingi, menerangkan dengan sebenarnya bahwa:</p><table style="width: 100%; font-size: 12pt; margin-bottom: 15px; margin-left: 10px;"><tr><td style="width: 160px; vertical-align: top;">Nama Lengkap</td><td style="width: 10px; vertical-align: top;">:</td><td><strong>${val('nama').toUpperCase()}</strong></td></tr><tr><td style="vertical-align: top;">NIK</td><td style="vertical-align: top;">:</td><td>${val('nik')}</td></tr><tr><td style="vertical-align: top;">Jenis Kelamin</td><td style="vertical-align: top;">:</td><td>${val('jenis_kelamin')}</td></tr><tr><td style="vertical-align: top;">Tempat/Tgl Lahir</td><td style="vertical-align: top;">:</td><td>${val('tempat_lahir')}, ${val('tgl_lahir')}</td></tr><tr><td style="vertical-align: top;">Agama</td><td style="vertical-align: top;">:</td><td>${val('agama')}</td></tr><tr><td style="vertical-align: top;">Pekerjaan</td><td style="vertical-align: top;">:</td><td>${val('pekerjaan')}</td></tr><tr><td style="vertical-align: top;">Alamat</td><td style="vertical-align: top;">:</td><td>${val('alamat')}</td></tr></table><div style="font-size: 12pt; text-align: justify; margin-bottom: 30px;">${isi}</div><div style="float: right; width: 40%; text-align: center; margin-top: 20px;"><p style="font-size: 12pt; margin-bottom: 5px;">Sukamaju, ${tglStr}</p><p style="font-size: 12pt; font-weight: bold; margin-bottom: 80px;">${ttdJabatan}</p><p style="font-size: 12pt; font-weight: bold; text-decoration: underline;">${ttdNama}</p></div></div>`;
+        }
+
+        function updatePreview() { const container = document.getElementById('kertasPreview'); if (container) container.innerHTML = getSuratHTML(); }
+        function updatePreviewDenganNomor(nomorBaru) { window.nomorSuratResmi = nomorBaru; updatePreview(); }
+
+        document.getElementById('submitBtn').addEventListener('click', async function () {
+            const btn = this; 
+            const originalText = btn.innerHTML;
+            const jenisSurat = document.getElementById('jenis_surat').value;
+
+            // 1. BLOK VALIDASI FORM (PENCEGAH DATA KOSONG)
+            if (!val('nik')) return alert("Harap isi NIK terlebih dahulu!");
+            if (!val('nama')) return alert("Harap isi Nama Lengkap!");
+            if (!val('jenis_kelamin')) return alert("Harap pilih Jenis Kelamin!"); 
+            if (!val('agama')) return alert("Harap pilih Agama!");
+            if (!val('tempat_lahir')) return alert("Harap isi Tempat Lahir!");
+            if (!val('tgl_lahir')) return alert("Harap pilih Tanggal Lahir!");
+            if (!val('pekerjaan')) return alert("Harap isi Pekerjaan!");
+            if (!val('alamat')) return alert("Harap isi Alamat domisili!");
+
+            // Validasi tambahan khusus untuk Surat Keterangan Usaha (SKU)
+            if (jenisSurat === 'sku') {
+                if (!val('nama_usaha')) return alert("Harap isi Nama Usaha!");
+            }
+            
+            // Validasi tambahan khusus untuk Surat Kustom (Bebas)
+            if (jenisSurat === 'kustom') {
+                if (!val('kustom_judul')) return alert("Harap isi Judul Surat!");
+                if (!val('kustom_isi')) return alert("Harap isi Paragraf Surat!");
+            }
+            // ==========================================
+
+            // Jika semua validasi lolos, tombol berubah menjadi loading
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; 
+            btn.disabled = true;
+
+            let data = {
+                nama: val('nama'), 
+                nik: val('nik'), 
+                alamat: val('alamat'), 
+                nama_usaha: val('nama_usaha'),
+                tujuan: 'Administrasi', 
+                tanggal: val('tanggal'), 
+                jenis_surat: jenisSurat,
+            };
+
+            // Jika surat kustom, tangkap isinya
+            if (data.jenis_surat === 'kustom') {
+                data.isi_kustom = val('kustom_isi');
+                data.tujuan = val('kustom_judul'); // Pinjam kolom tujuan untuk simpan judul surat sementara
+            }
+
+            const token = sessionStorage.getItem('authToken');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/surat`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, 
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ Surat berhasil dibuat! Nomor: ' + result.nomor_urut);
+                    updatePreviewDenganNomor(result.nomor_urut);
+                    
+                    // Aktifkan tombol cetak
+                    const btnCetak = document.getElementById('btnCetak');
+                    btnCetak.disabled = false; 
+                    btnCetak.classList.remove('btn-outline-primary'); 
+                    btnCetak.classList.add('btn-primary', 'shadow');
+                    
+                    btn.innerHTML = '<i class="fas fa-check"></i> Tersimpan';
+                } else { 
+                    throw new Error(result.message || result.error || "Gagal menyimpan"); 
+                }
+            } catch (err) { 
+                console.error(err); 
+                alert('❌ Error: ' + err.message); 
+                btn.innerHTML = originalText; 
+                btn.disabled = false; 
+            }
+        });
+
+        function cetakLangsung() {
+            const isi = getSuratHTML();
+            const win = window.open('', '', 'height=600,width=800');
+            win.document.write(`<html><head><title>Cetak Surat</title></head><body style="margin:0;" onload="window.print();window.close()">${isi}</body></html>`);
+            win.document.close();
+        }
+
+        function logout() { if (confirm('Keluar sistem?')) { sessionStorage.removeItem('authToken'); window.location.href = 'index.html'; } }
+
+        // ==========================================
+        // FITUR KEAMANAN: IDLE TIMEOUT (AUTO-LOGOUT)
+        // ==========================================
+        
+        // Atur batas waktu menganggur (dalam milidetik)
+        // Contoh: 15 Menit = 15 * 60 * 1000 = 900000 ms. 
+        // Untuk testing, ubah sementara jadi 10000 (10 detik)
+        const IDLE_TIMEOUT = 15 * 60 * 1000; 
+        let idleTimer;
+
+        // Fungsi untuk mereset timer setiap kali ada pergerakan
+        function resetIdleTimer() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(autoLogout, IDLE_TIMEOUT);
+        }
+
+        // Fungsi yang mengeksekusi pengeluaran paksa
+        function autoLogout() {
+            sessionStorage.clear(); // Hapus kunci login
+            alert("Sesi Anda telah berakhir karena tidak ada aktivitas selama 15 menit. Demi keamanan, silakan login kembali.");
+            window.location.href = 'index.html'; // Lempar ke halaman depan
+        }
+
+        // Daftar sensor untuk mendeteksi keberadaan staf di depan layar
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+        window.addEventListener('scroll', resetIdleTimer);
+
+        // Jalankan timer pertama kali saat halaman dibuka
+        resetIdleTimer();
+    </script>
+</body>
+
+</html>
