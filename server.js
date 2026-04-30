@@ -12,11 +12,12 @@ const SECRET_KEY = 'rahasia_negara_jangan_disebar';
 
 // === 1. KONFIGURASI DATABASE ===
 const dbConfig = {
-    host: 'sql.freedb.tech', // Sesuaikan dengan Host dari FreeDB
-    port: 3306,              // Biarkan 3306 (Port standar MySQL online)
-    user: 'freedb_Sponginc', // Sesuaikan dengan User dari FreeDB
-    password: 'Yp3fs5P*?dp!JN!', // Sesuaikan dengan Password dari FreeDB
-    database: 'freedb_ProjectKantorDesa'       // Sesuaikan dengan DB Name dari FreeDB
+    host: 'sql.freedb.tech', 
+    port: 3306,              
+    user: 'freedb_Sponginc', 
+    password: 'Yp3fs5P*?dp!JN!', 
+    database: 'freedb_ProjectKantorDesa', // <--- JANGAN LUPA KOMA DI SINI
+    ssl: { rejectUnauthorized: false }    // <--- TAMBAHKAN BARIS INI (SURAT PENGANTARNYA)
 };
 
 const pool = mysql.createPool(dbConfig);
