@@ -44,9 +44,10 @@ app.post('/api/login', async (req, res) => {
             const user = rows[0];
             
             // Cek apakah password di DB sudah di-hash (Bcrypt) atau masih teks biasa (akun lama)
-            const isMatch = user.password.startsWith('$2b$') 
-                ? await bcrypt.compare(password, user.password) 
-                : password === user.password;
+            //const isMatch = user.password.startsWith('$2b$') 
+                //? await bcrypt.compare(password, user.password) 
+                //: password === user.password;
+                const isMatch = (req.body.password === user.password);
 
             if (isMatch) {
                 const token = jwt.sign({ username: user.username, role: user.role, name: user.nama_lengkap }, SECRET_KEY, { expiresIn: '24h' });
