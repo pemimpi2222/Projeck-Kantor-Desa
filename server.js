@@ -16,7 +16,7 @@ const dbConfig = {
     port: 4000,                           // Port TiDB pasti 4000
     user: '7fEq5HD6vQFGK7W.root',                   // Sesuaikan user TiDB kamu
     password: 'ypPvtKZIbeTi4uk6',       // Sesuaikan password TiDB kamu
-    database: 'sys',                     // Database bawaan TiDB selalu bernama 'test'
+    database: 'test',                     // Database bawaan TiDB selalu bernama 'test'
     ssl: { rejectUnauthorized: true }     // TiDB mewajibkan SSL disetel ke true
 };
 
