@@ -36,30 +36,42 @@ async function logActivity(actorName, action, desc) {
 // ================= 2. KEAMANAN & LOGIN (SUDAH BCRYPT) =================
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
+    
+    // CCTV 1: Mengecek apa yang dikirim dari HTML ke Server
+    console.log("=== DETEKTIF LOGIN ===");
+    console.log("1. Dikirim dari Web -> Username:", username, "| Password:", password);
+
     try {
-        // Ambil data user berdasarkan username saja (jangan cek password di SQL)
         const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
         
+        // CCTV 2: Mengecek apa yang ditemukan Server di dalam Database FreeDB
+        console.log("2. Ditemukan di DB ->", rows);
+
         if (rows.length > 0) {
             const user = rows[0];
             
-            // Cek apakah password di DB sudah di-hash (Bcrypt) atau masih teks biasa (akun lama)
-            //const isMatch = user.password.startsWith('$2b$') 
-                //? await bcrypt.compare(password, user.password) 
-                //: password === user.password;
-                const isMatch = (req.body.password === user.password);
+            // CCTV 3: Membandingkan secara langsung
+            console.log("3. Pencocokan -> Input:", password, "VS Database:", user.password);
+
+            const isMatch = (password === user.password);
 
             if (isMatch) {
+                console.log("4. HASIL: COCOK! Login Sukses.");
                 const token = jwt.sign({ username: user.username, role: user.role, name: user.nama_lengkap }, SECRET_KEY, { expiresIn: '24h' });
                 await logActivity(user.nama_lengkap, 'LOGIN', `Berhasil masuk ke sistem.`);
                 res.json({ success: true, token, name: user.nama_lengkap, role: user.role });
             } else {
+                console.log("4. HASIL: GAGAL COCOK!");
                 res.status(401).json({ success: false, message: "Username/Password Salah!" });
             }
         } else {
+            console.log("HASIL: Username tidak ditemukan di database!");
             res.status(401).json({ success: false, message: "Username/Password Salah!" });
         }
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        console.error("ERROR SISTEM:", err.message);
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
 function authenticateToken(req, res, next) {
