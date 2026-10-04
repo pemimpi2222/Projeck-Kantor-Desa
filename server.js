@@ -10,14 +10,14 @@ const app = express();
 const PORT = 3000;
 const SECRET_KEY = 'rahasia_negara_jangan_disebar';
 
-// === 1. KONFIGURASI DATABASE ===
+//KONFIGURASI DATABASE
 const dbConfig = {
-    host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com', // Sesuaikan host TiDB kamu
-    port: 4000,                           // Port TiDB pasti 4000
-    user: '7fEq5HD6vQFGK7W.root',                   // Sesuaikan user TiDB kamu
-    password: 'ypPvtKZIbeTi4uk6',       // Sesuaikan password TiDB kamu
-    database: 'test',                     // Database bawaan TiDB selalu bernama 'test'
-    ssl: { rejectUnauthorized: true }     // TiDB mewajibkan SSL disetel ke true
+    host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+    port: 4000,
+    user: '7fEq5HD6vQFGK7W.root',
+    password: 'ypPvtKZIbeTi4uk6',
+    database: 'test',
+    ssl: { rejectUnauthorized: true }
 };
 
 const pool = mysql.createPool(dbConfig);
@@ -34,29 +34,29 @@ async function logActivity(actorName, action, desc) {
     } catch (err) { console.error("Gagal log:", err); }
 }
 
-// ================= 2. KEAMANAN & LOGIN (SUDAH BCRYPT) =================
+//BCRYPT
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
-    
-    // CCTV 1: Mengecek apa yang dikirim dari HTML ke Server
+
+    //Mengecek apa yang dikirim dari HTML ke Server
     console.log("=== DETEKTIF LOGIN ===");
     console.log("1. Dikirim dari Web -> Username:", username, "| Password:", password);
 
     try {
         const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
-        
-        // CCTV 2: Mengecek apa yang ditemukan Server di dalam Database FreeDB
+
+        //Mengecek apa yang ditemukan Server di dalam Database FreeDB
         console.log("2. Ditemukan di DB ->", rows);
 
         if (rows.length > 0) {
             const user = rows[0];
-            
-            // CCTV 3: Membandingkan secara langsung
+
+            //Membandingkan secara langsung
             console.log("3. Pencocokan -> Input:", password, "VS Database:", user.password);
 
-            const isMatch = user.password.startsWith('$2b$') 
-    ? await bcrypt.compare(req.body.password, user.password) 
-    : (req.body.password === user.password);
+            const isMatch = user.password.startsWith('$2b$')
+                ? await bcrypt.compare(req.body.password, user.password)
+                : (req.body.password === user.password);
 
             if (isMatch) {
                 console.log("4. HASIL: COCOK! Login Sukses.");
@@ -71,9 +71,9 @@ app.post('/api/login', async (req, res) => {
             console.log("HASIL: Username tidak ditemukan di database!");
             res.status(401).json({ success: false, message: "Username/Password Salah!" });
         }
-    } catch (err) { 
+    } catch (err) {
         console.error("ERROR SISTEM:", err.message);
-        res.status(500).json({ error: err.message }); 
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -88,7 +88,7 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// ================= 3. API WARGA =================
+//API WARGA 
 app.get('/api/warga', async (req, res) => {
     const isDeleted = req.query.deleted === 'true' ? 1 : 0;
     try {
@@ -104,7 +104,7 @@ app.post('/api/warga', authenticateToken, async (req, res) => {
         const sql = `INSERT INTO warga (nik, nama, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat, agama, status_perkawinan, pekerjaan, pendidikan, nomor_kk, no_hp, keterangan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const values = [d.nik, d.nama, d.tempat_lahir, d.tanggal_lahir, d.jenis_kelamin, d.alamat, d.agama, d.status_perkawinan, d.pekerjaan, d.pendidikan, d.nomor_kk, d.no_hp, d.keterangan];
         await pool.query(sql, values);
-        
+
         await logActivity(req.user.name, 'TAMBAH WARGA', `Mendaftarkan warga baru: ${d.nama}`);
         res.json({ message: "Sukses" });
     } catch (err) { res.status(500).json({ error: "Gagal: " + err.message }); }
@@ -117,37 +117,37 @@ app.put('/api/warga/:id', authenticateToken, async (req, res) => {
         const sql = `UPDATE warga SET nik=?, nama=?, tempat_lahir=?, tanggal_lahir=?, jenis_kelamin=?, alamat=?, agama=?, status_perkawinan=?, pekerjaan=?, pendidikan=?, nomor_kk=?, no_hp=?, keterangan=? WHERE id=?`;
         const values = [d.nik, d.nama, d.tempat_lahir, d.tanggal_lahir, d.jenis_kelamin, d.alamat, d.agama, d.status_perkawinan, d.pekerjaan, d.pendidikan, d.nomor_kk, d.no_hp, d.keterangan, req.params.id];
         await pool.query(sql, values);
-        
+
         await logActivity(req.user.name, 'EDIT WARGA', `Mengubah data milik warga ID ${req.params.id}`);
         res.json({ message: "Sukses" });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.delete('/api/warga/:id', authenticateToken, async (req, res) => {
-    try { 
-        await pool.query("UPDATE warga SET is_deleted = 1 WHERE id = ?", [req.params.id]); 
+    try {
+        await pool.query("UPDATE warga SET is_deleted = 1 WHERE id = ?", [req.params.id]);
         await logActivity(req.user.name, 'HAPUS WARGA', `Memindahkan data Warga ID ${req.params.id} ke tempat sampah`);
-        res.json({ message: "Ok" }); 
+        res.json({ message: "Ok" });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/warga/:id/restore', authenticateToken, async (req, res) => {
-    try { 
-        await pool.query("UPDATE warga SET is_deleted = 0 WHERE id = ?", [req.params.id]); 
+    try {
+        await pool.query("UPDATE warga SET is_deleted = 0 WHERE id = ?", [req.params.id]);
         await logActivity(req.user.name, 'RESTORE WARGA', `Memulihkan data Warga ID ${req.params.id}`);
-        res.json({ message: "Ok" }); 
+        res.json({ message: "Ok" });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.delete('/api/warga/:id/permanen', authenticateToken, async (req, res) => {
-    try { 
-        await pool.query("DELETE FROM warga WHERE id = ?", [req.params.id]); 
+    try {
+        await pool.query("DELETE FROM warga WHERE id = ?", [req.params.id]);
         await logActivity(req.user.name, 'HAPUS PERMANEN', `Menghapus permanen data Warga ID ${req.params.id}`);
-        res.json({ message: "Ok" }); 
+        res.json({ message: "Ok" });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ================= 4. API SURAT =================
+// ================= API SURAT =================
 
 app.get('/api/surat', async (req, res) => {
     const isDeleted = req.query.deleted === 'true' ? 1 : 0;
@@ -162,8 +162,8 @@ app.get('/api/surat', async (req, res) => {
             ORDER BY id DESC
         `, [isDeleted]);
         res.json(rows);
-    } catch (err) { 
-        res.status(500).json({ error: err.message }); 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -177,7 +177,7 @@ app.post('/api/surat', authenticateToken, async (req, res) => {
         const values = [nextNo, d.jenis_surat, d.nama, d.nik, d.nama_usaha, d.alamat, d.tanggal, d.tujuan || '', d.isi_kustom || null];
 
         await pool.query(sql, values);
-        
+
         await logActivity(req.user.name, 'BUAT SURAT', `Membuat Surat ${d.jenis_surat.toUpperCase()} untuk ${d.nama}`);
         res.json({ message: 'Surat berhasil!', nomor_urut: nextNo });
     } catch (err) {
@@ -192,7 +192,7 @@ app.post('/api/warga/ajukan-surat', async (req, res) => {
         const [dataWarga] = await pool.query("SELECT * FROM warga WHERE nik = ?", [d.nik]);
         if (dataWarga.length === 0) return res.status(404).json({ error: "Data warga tidak ditemukan." });
 
-        const w = dataWarga[0]; 
+        const w = dataWarga[0];
         const [resMax] = await pool.query('SELECT MAX(nomor_urut) as m FROM surat WHERE YEAR(tanggal_surat) = YEAR(?)', [d.tanggal]);
         const nextNo = (resMax[0].m || 0) + 1;
 
@@ -202,14 +202,14 @@ app.post('/api/warga/ajukan-surat', async (req, res) => {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, 0)`;
 
         const values = [
-            nextNo, d.jenis_surat, w.nama, w.nik, w.tempat_lahir, w.tanggal_lahir, w.jenis_kelamin, 
+            nextNo, d.jenis_surat, w.nama, w.nik, w.tempat_lahir, w.tanggal_lahir, w.jenis_kelamin,
             w.alamat, w.agama, w.status_perkawinan, w.pekerjaan, d.nama_usaha || '', d.tanggal, d.tujuan
         ];
 
         await pool.query(sql, values);
-        
+
         await logActivity("Sistem", 'PENGAJUAN SURAT', `Warga bernama ${w.nama} mengajukan surat secara online`);
-        
+
         res.json({ message: "Berhasil mengajukan surat lengkap!" });
     } catch (err) {
         console.error("Error Detail:", err.message);
@@ -241,7 +241,7 @@ app.put('/api/surat/:id/edit', authenticateToken, async (req, res) => {
         const sql = `UPDATE surat SET nama_pemohon=?, nik_pemohon=?, jenis_surat=?, nama_usaha=?, tanggal_surat=?, alamat=?, nomor_urut=? WHERE id=?`;
         const values = [d.nama, d.nik, d.jenis_surat, d.nama_usaha, d.tanggal, d.alamat, d.nomor_urut, req.params.id];
         await pool.query(sql, values);
-        
+
         await logActivity(req.user.name, 'EDIT SURAT', `Mengedit data pada Surat ID ${req.params.id}`);
         res.json({ message: "Data surat diupdate" });
     } catch (err) {
@@ -264,10 +264,10 @@ app.delete('/api/surat/:id', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/surat/:id/restore', authenticateToken, async (req, res) => {
-    try { 
-        await pool.query("UPDATE surat SET is_deleted=0 WHERE id=?", [req.params.id]); 
+    try {
+        await pool.query("UPDATE surat SET is_deleted=0 WHERE id=?", [req.params.id]);
         await logActivity(req.user.name, 'RESTORE SURAT', `Memulihkan Surat ID ${req.params.id} dari tempat sampah`);
-        res.json({ msg: "Ok" }); 
+        res.json({ msg: "Ok" });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -278,12 +278,13 @@ app.get('/api/stats', async (req, res) => {
         const [surat] = await pool.query("SELECT COUNT(*) as c FROM surat WHERE is_deleted=0 AND MONTH(tanggal_surat) = MONTH(CURRENT_DATE()) AND YEAR(tanggal_surat) = YEAR(CURRENT_DATE())");
         const [pending] = await pool.query("SELECT COUNT(*) as c FROM surat WHERE is_deleted=0 AND (status='pending' OR status='draft')");
 
+        // QUERY YANG SUDAH DIPERBAIKI:
         const [grafik] = await pool.query(`
             SELECT DATE_FORMAT(tanggal_surat, '%b') as bulan, COUNT(*) as jumlah 
             FROM surat 
             WHERE is_deleted = 0 
-            GROUP BY YEAR(tanggal_surat), MONTH(tanggal_surat) 
-            ORDER BY tanggal_surat ASC 
+            GROUP BY YEAR(tanggal_surat), MONTH(tanggal_surat), DATE_FORMAT(tanggal_surat, '%b') 
+            ORDER BY MIN(tanggal_surat) ASC 
             LIMIT 6
         `);
 
@@ -303,19 +304,19 @@ app.get('/api/logs', authenticateToken, async (req, res) => {
     try { const [rows] = await pool.query("SELECT * FROM logs ORDER BY timestamp DESC LIMIT 100"); res.json(rows); } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Endpoint Publik untuk Cek NIK Warga (Tanpa Token)
+// Endpoint Publik untuk Cek NIK Warga
 app.get('/api/cek-warga/:nik', async (req, res) => {
     try {
         // PERUBAHAN: Ubah "SELECT nik, nama" menjadi "SELECT *" agar semua data warga terambil
         const [rows] = await pool.query("SELECT * FROM warga WHERE nik = ? AND is_deleted = 0", [req.params.nik]);
-        if (rows.length > 0) { res.json({ valid: true, data: rows[0] }); } 
+        if (rows.length > 0) { res.json({ valid: true, data: rows[0] }); }
         else { res.json({ valid: false }); }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// ================= 6. API MANAJEMEN AKUN (USERS) - SUDAH BCRYPT =================
+//API MANAJEMEN AKUN USER
 
 // Ambil semua daftar akun
 app.get('/api/users', authenticateToken, async (req, res) => {
@@ -325,7 +326,7 @@ app.get('/api/users', authenticateToken, async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Buat akun baru (Hash Password sebelum simpan)
+// Buat akun baru
 app.post('/api/users', authenticateToken, async (req, res) => {
     const d = req.body;
     try {
@@ -338,7 +339,7 @@ app.post('/api/users', authenticateToken, async (req, res) => {
         const sql = `INSERT INTO users (username, password, nama_lengkap, role) VALUES (?, ?, ?, ?)`;
         // Simpan hasil gilingan (hashedPassword), BUKAN teks aslinya
         await pool.query(sql, [d.username, hashedPassword, d.nama_lengkap, d.role]);
-        
+
         await logActivity(req.user.name, 'TAMBAH AKUN', `Membuat akun baru untuk: ${d.nama_lengkap} (${d.role})`);
         res.json({ message: "Akun berhasil dibuat" });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -370,12 +371,12 @@ app.put('/api/users/:id/reset', authenticateToken, async (req, res) => {
 
         // Update dengan password yang sudah digiling
         await pool.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, req.params.id]);
-        
+
         await logActivity(req.user.name, 'RESET PASSWORD', `Mereset password milik akun: ${targetUser[0].nama_lengkap}`);
-        
+
         res.json({ message: "Password berhasil diubah" });
-    } catch (err) { 
-        res.status(500).json({ error: err.message }); 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

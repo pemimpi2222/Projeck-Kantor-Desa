@@ -431,7 +431,7 @@
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
     <script>
-        const API_BASE = '';
+        const API_BASE = 'const API_BASE = 'https://projeck-kantor-desa.onrender.com';';
         let currentTab = 'active';
         let idSuratSedangDibuka = null;
         let idSuratSedangDiedit = null;
@@ -509,18 +509,66 @@
         }
 
         function loadStatistik() {
-            fetchAuth(API_BASE + '/api/stats').then(r => r.json()).then(d => {
-                $('#statWarga').text(d.totalWarga); $('#statSurat').text(d.suratBulanIni); $('#statPending').text(d.pending);
-                if (d.chartData) renderChart(d.chartData);
-            });
+            fetchAuth(API_BASE + "/api/stats")
+                .then((r) => r.json())
+                .then((d) => {
+                    // 1. Update Card Angka Statistik
+                    $("#statWarga").text(d.totalWarga || 0);
+                    $("#statSurat").text(d.suratBulanIni || 0);
+                    $("#statPending").text(d.pending || 0);
+
+                    // 2. Render Chart meskipun datanya kosong (agar kerangka grafiknya tetap muncul)
+                    const chartData = d.chartData || [];
+                    if (Array.isArray(chartData)) {
+                        renderChart(chartData);
+                    }
+                })
+                .catch((err) => {
+                    console.error("Gagal memuat statistik dari server:", err);
+                });
         }
 
         function renderChart(dataLog) {
-            const ctx = document.getElementById('suratChart');
-            if (window.myChartInstance) window.myChartInstance.destroy();
+            const ctx = document.getElementById("suratChart");
+            if (!ctx) return;
+
+            if (window.myChartInstance) {
+                window.myChartInstance.destroy();
+            }
+
+            // Menyesuaikan jika key dari TiDB/Backend berupa `bulan`/`month` dan `jumlah`/`total`/`count`
+            const labels = dataLog.map((d) => d.bulan || d.month || d.label || "");
+            const dataValues = dataLog.map(
+                (d) => d.jumlah || d.count || d.total || d.value || 0,
+            );
+
             window.myChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: { labels: dataLog.map(d => d.bulan), datasets: [{ label: 'Total Surat', data: dataLog.map(d => d.jumlah), borderColor: '#0066ff', tension: 0.4 }] }
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Total Surat",
+                            data: dataValues,
+                            borderColor: "#0066ff",
+                            backgroundColor: "rgba(0, 102, 255, 0.1)",
+                            fill: true,
+                            tension: 0.4,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                            },
+                        },
+                    },
+                },
             });
         }
 
@@ -658,11 +706,11 @@
         // ==========================================
         // FITUR KEAMANAN: IDLE TIMEOUT (AUTO-LOGOUT)
         // ==========================================
-        
+
         // Atur batas waktu menganggur (dalam milidetik)
         // Contoh: 15 Menit = 15 * 60 * 1000 = 900000 ms. 
         // Untuk testing, ubah sementara jadi 10000 (10 detik)
-        const IDLE_TIMEOUT = 15 * 60 * 1000; 
+        const IDLE_TIMEOUT = 15 * 60 * 1000;
         let idleTimer;
 
         // Fungsi untuk mereset timer setiap kali ada pergerakan
